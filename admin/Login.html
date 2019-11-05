@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<head>
+        <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+        <link rel="stylesheet" href="/css/logincss1.css">
+        <title>Staff Login</title>
+</head>
+
+<body>
+
+        <div class="container">
+                <div class="sub-title">
+                        <p>LOGIN</p>
+                </div>
+                <div class="content">
+                        <label>EMAIL</label>
+                        <input type="text" id="email" name="email" placeholder="Please enter your EMAIL.">
+
+                        <label>Password</label>
+                        <input type="password" id="password" name="password" placeholder="Please enter your PASSWORD.">
+                        <button onClick="login()">Submit</button>
+                </div>
+                <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
+                <script src="/js/FirebaseInit.js"></script>
+                <script src="/js/LoginScript.js"></script>
+</body>

@@ -1,78 +1,60 @@
 <!DOCTYPE html>
 
 <head>
-        <link rel="stylesheet" href="/css/logincss1.css">
-        <title>Manage User</title>
+    <link rel="stylesheet" href="/css/logincss1.css">
+    <title>Manage User</title>
 </head>
-<body>
-    
-<div class="header" id="myHeader">
-    <div class="logo">
-        
-    <p>Parking Company</p></div>
-    <div class="menu">
-        <nav>
-                <ul>
-                        <li class="dropdown"><a>Parking Layout Maintenance</a>
-                            <div class="dropdown-content">
-                                    <a href="createNewLayout.html">Create New Parking layout</a>
-                                    <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                    <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                            </div>
-                            <li class="dropdown"><a>Manage User</a>
-                                <div class="dropdown-content">
-                                        <a href="registerNewStaff.html">Register New Staff</a>
-                                        <a href="manageUser.html">Manage Staff Role</a>
-                                </div>
-                        </li>
-                    </ul>
-        </nav></div>
-</div>
-<div class="container">
-<div class="sub-title">
-    <p>Manage User</p>
-</div>
-<div class="content">
-      
-            <div class="table">
-                    <table>
-                        <tr>
-                            <th>No</th>
-                            <th>Description</th>
-                            <th>Date</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><select>
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                            </select></td>
-                            <td>11-2-2019</td>
-                        </tr>
-                        <tr>
-                                <td>2</td>
-                                <td><select>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                    </select></td>
-                                <td>11-4-2019</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><select>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                    </select></td>
-                                <td>11-3-2019</td>
-                            </tr>
-                    </table>
-                </div>
-         
-        
-</div>
-</div>
 
+<body>
+
+    <div class="header" id="myHeader">
+        <div class="logo">
+
+            <p>Parking Company</p>
+        </div>
+        <div class="menu">
+            <nav>
+                <ul>
+                    <li class="dropdown"><a>Parking Layout Maintenance</a>
+                        <div class="dropdown-content">
+                            <a href="createNewLayout.html">Create New Parking layout</a>
+                            <a href="modifyExistingLayout.html">Manage Parking layout</a>
+                            <a href="manageSlotStatus.html">Manage Parking slot status</a>
+                        </div>
+                    <li class="dropdown"><a>Manage User</a>
+                        <div class="dropdown-content">
+                            <a href="registerNewStaff.html">Register New Staff</a>
+                            <a href="manageUser.html">Manage Staff Role</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="container">
+        <div class="sub-title">
+            <p>Manage User</p>
+        </div>
+        <div class="content">
+
+            <div class="table">
+                <table>
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                    </tr>
+                    <tbody id="userTable">
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
+    <script src="/js/FirebaseInit.js"></script>
+    <script src="/js/ManageUser.js"></script>
 </body>

@@ -8,7 +8,6 @@ function login() {
   firebase.auth().signInWithEmailAndPassword(userEmail, userPass).then(function () {
 
     setCookie("User", JSON.stringify(firebase.auth().currentUser));
-    
     window.location = "/admin/dashboard.html";
   }).catch(function (error) {
     // Handle Errors here.

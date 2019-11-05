@@ -42,11 +42,12 @@ div.logo p{
     float: left;
 }
 div.menu{
-    position: relative;
+   
     margin-bottom: 2px;
-    width:65%;
+    margin-right :10px;
+    width:max-content;
     
-    float:left;
+    float:right;
 }
  div.containter{
      float:left;
@@ -115,7 +116,7 @@ div.content{
 }
 .dropdown{
     border-radius: 5px;
-    margin:0;
+    margin-right:15px;
     font-family: 'Nunito', sans-serif;
     font-size:20px;
 }
@@ -142,6 +143,11 @@ div.content{
 .table table{
     border-collapse: collapse;
     width:100%;
+}
+.selection{
+    font-size: 20px;
+    font-weight:bold;
+    width:30%;
 }
 .table td,th{
     border: 1px solid #dddddd;

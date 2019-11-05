@@ -17,14 +17,20 @@ function initFirebase() {
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
-        setCookie("isSignout", true);
+        var welcomeMessage = document.getElementById("welcome");
+        if (welcomeMessage) {
+            welcomeMessage.innerHTML ="Welcome " +user.email;
+        }
+     
+        
+        setCookie("isSignout", false);
         // User is signed in.
         var user = firebase.auth().currentUser;
         if (user != null) {
             var email_id = user.email;
         }
     } else {
-        setCookie("isSignout",true);
+      
         var isSignout = JSON.parse(getCookie("isSignout"));
       
         if (!isSignout) {   
@@ -52,6 +58,7 @@ function getCookie(cname) {
     return "";
 }
 function setCookie(name, value, days) {
+
     if (days) {
         var date = new Date();
         date.setTime(date.getTime()+(days*24*60*60*1000));

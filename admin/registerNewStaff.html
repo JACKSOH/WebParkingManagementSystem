@@ -2,42 +2,57 @@
 
 <head>
         <link rel="stylesheet" href="/css/logincss1.css">
-        <title>Template</title>
+        <title>Register new staff</title>
 </head>
+
 <body>
-    
-<div class="header" id="myHeader">
-    <div class="logo">
-        
-    <p>Parking Company</p></div>
-    <div class="menu">
-        <nav>
-                        <ul>
+
+        <div class="header" id="myHeader">
+                <div class="logo">
+
+                        <p>Parking Company</p>
+                </div>
+                <div class="menu">
+                        <nav>
+                                <ul>
                                         <li class="dropdown"><a>Parking Layout Maintenance</a>
-                                            <div class="dropdown-content">
-                                                    <a href="createNewLayout.html">Create New Parking layout</a>
-                                                    <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                                    <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                                            </div>
-                                            <li class="dropdown"><a>Manage User</a>
+                                                <div class="dropdown-content">
+                                                        <a href="createNewLayout.html">Create New Parking layout</a>
+                                                        <a href="modifyExistingLayout.html">Manage Parking layout</a>
+                                                        <a href="manageSlotStatus.html">Manage Parking slot status</a>
+                                                </div>
+                                        <li class="dropdown"><a>Manage User</a>
                                                 <div class="dropdown-content">
                                                         <a href="registerNewStaff.html">Register New Staff</a>
                                                         <a href="manageUser.html">Manage Staff Role</a>
                                                 </div>
                                         </li>
-                                    </ul>
-        </nav></div>
-</div>
-<div class="container">
-<div class="sub-title">
-    <p>Register New Staff</p>
-</div>
-<div class="content">
-        <form action="/staff/Dashboard.html">
-            <label>Register New Staff</label>
-            <p></p>
-        </form>
-</div>
-</div>
-
+                                        <button onclick="logout()">Logout</button>
+                                </ul>
+                        </nav>
+                </div>
+        </div>
+        <div class="container">
+                <div class="sub-title">
+                        <p>Register New Staff</p>
+                </div>
+                <div class="content">
+                        <label name="email">Email</label> <input type="text" id="email" required="required" /><br />
+                        <label name="name">Name</label><input type="text" id="name" required="required" /><br />
+                        <label name="passsword">Password</label><input type="password" id="password"
+                                required="required" /><br />
+                        <label name="confirmPassword">Confirm Password</label><input type="password"
+                                id="confirmPassword" required="required" /><br />
+                        <label name="phone">Phone</label><input type="text" id="phone" /><br />
+                        <label name="role">Role</label><br /> <select id="role" class="selection">
+                                <option>Admin</option>
+                                <option>Staff</option>
+                        </select><br />
+                        <button onclick="registerStaff()">Submit</button>
+                </div>
+        </div>
+        <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
+        <script src="/js/FirebaseInit.js"></script>
+        <script src="/js/Register.js"></script>
+</body>
 </body>
