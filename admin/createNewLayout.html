@@ -4,40 +4,83 @@
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>New Parking Layout</title>
 </head>
+
 <body>
-    
-<div class="header" id="myHeader">
-    <div class="logo">
-        
-    <p>Parking Company</p></div>
-    <div class="menu">
-        <nav>
-                        <ul>
+
+        <div class="header" id="myHeader">
+                <div class="logo">
+
+                        <p>Parking Company</p>
+                </div>
+                <div class="menu">
+                        <nav>
+                                <ul>
                                         <li class="dropdown"><a>Parking Layout Maintenance</a>
-                                            <div class="dropdown-content">
-                                                    <a href="createNewLayout.html">Create New Parking layout</a>
-                                                    <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                                    <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                                            </div>
-                                            <li class="dropdown"><a>Manage User</a>
+                                                <div class="dropdown-content">
+                                                        <a href="createNewLayout.html">Create New Parking layout</a>
+                                                        <a href="modifyExistingLayout.html">Manage Parking layout</a>
+                                                        <a href="manageSlotStatus.html">Manage Parking slot status</a>
+                                                </div>
+                                        <li class="dropdown"><a>Manage User</a>
                                                 <div class="dropdown-content">
                                                         <a href="registerNewStaff.html">Register New Staff</a>
                                                         <a href="manageUser.html">Manage Staff Role</a>
                                                 </div>
                                         </li>
-                                    </ul>
-        </nav></div>
-</div>
-<div class="container">
-<div class="sub-title">
-    <p>New Parking</p>
-</div>
-<div class="content">
-      
-           <div class="editor-container" ></div>
-           
-       
-</div>
-</div>
+                                </ul>
+                        </nav>
+                </div>
+        </div>
+        <div class="container">
+                <div class="sub-title">
+                        <p>New Parking</p>
+                </div>
+                <div class="content">
+                        <div id="basicContainer">
+                                <label name="company">Company/Parking Name</label>
+                                <input type="text" id="company" name="company" placeholder="Please enter your Company.">
+                                <div class="blockContainer" id="blockContainer">
+                                        <label name="block">Block Quantity</label><br />
+                                        <input type="number" id="blockQuantity" name="block"
+                                                placeholder="Please enter block Quantity (number only)."
+                                                onchange="adjustBlockRequest()"><br />
 
+                                </div>
+
+
+
+                                <br /> <button onClick="validateBasicInfo()">Next</button>
+                        </div>
+                        <div id="layoutContainer">
+                                <div class="statusContainer">
+                                        <p>Status</p><br />
+                                        <div id="status" width="150" height="600" style="background-color: darkgrey;" >
+                                        </div>
+                                </div>
+
+                                <div class="editorContainer">
+                                        <div id="component"> <canvas id="compCanvas" width="600" height="150"
+                                                        style="background-color: darkgrey"></canvas></div>
+
+
+
+                                        <div id="editor">
+                                                <canvas id="editCanvas" width="600" height="600"
+                                                        style="background-color: burlywood">
+                                                </canvas>
+
+                                                <br />Message1: <label id="message">N/A</label>
+                                                <br />Message2: <label id="message1">N/A</label>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+
+        </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
+        <script src="/js/FirebaseInit.js"></script>
+        <script src="/js/LayoutManager.js"></script>
+        <script src="/js/LayoutManagerForCanvas.js"></script>
 </body>
