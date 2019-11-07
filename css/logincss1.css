@@ -8,6 +8,8 @@ body {
     background-color: antiquewhite;
     color: darkred;
     font-family: 'Nunito', sans-serif;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 div.header {
@@ -71,6 +73,8 @@ div.sub-title {
 }
 
 div.content {
+    max-width: 100%;
+    max-height: 100%;
     font-weight: bolder;
     border: 20px;
     border-radius: 15px;
@@ -220,16 +224,29 @@ button:hover {
 .editor-container {
     height: 600px;
 }
-.layoutContainer{
-    margin-top:100;
+
+.layoutContainer {
+    margin-top: 100;
 }
 
 .statusContainer {
+    
     position: relative;
     float: left;
 }
 
 .editorContainer {
-    margin-left:20%;
     
+    margin-left: 200px;
+    
+   
+}
+
+.editor , .component{
+    border-radius: 15px;
+     overflow: auto;
+    
+}
+.status{
+    border-radius: 15px;
 }

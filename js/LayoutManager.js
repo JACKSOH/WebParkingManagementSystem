@@ -6,8 +6,8 @@ var floors = []; // floor array
 
 
 function init() {
-//     document.getElementById("layoutContainer").style.display = "none";
-// }
+    // document.getElementById("layoutContainer").style.display = "none";
+}
 
 function adjustBlockRequest() { //to maintain the block quantity
     var blockAddon = document.getElementById("blockAddon"); //check whether have the block Add on 
@@ -83,17 +83,17 @@ function validateBasicInfo() {
     var blockQuantity = document.getElementById("blockQuantity").value;
     for (var i = 0; i < blockQuantity; i++) {
         var blockName = document.getElementById("block" + (i + 1)).value;
-        var block = { blockid: "block" + (i + 1), blockName: blockName };
+        var block = { blockid: "block" + (i + 1), blockName: blockName }; //E.g Id :block1
         blocks.push(block); // push the block to  
 
         var floorQuantity = document.getElementById("floor" + (i + 1)).value;
-        if (floorQuantity && floorQuantity<10) { //check floor is filled
+        if (floorQuantity && floorQuantity < 10) { //check floor is filled
             var width = document.getElementById("floor" + (i + 1) + "width").value;
             var height = document.getElementById("floor" + (i + 1) + "height").value;
             if (width >= 100 && width <= 1500 && height >= 100 && height <= 1500) { //check if the block longer than min and max 
-                
+
                 for (var j = 0; j < floorQuantity; j++) { //put o the array if no wrong
-                    var floor = { floorid: "floor" + (i + 1), width: width, height: height };
+                    var floor = { blockid: "block" + (i + 1),floorid:  "floor" + (j + 1), width: width, height: height }; // E.g Id : floor1
                     floors.push(floor);
                     validation = true;
 
@@ -102,7 +102,7 @@ function validateBasicInfo() {
                 validation = false;
                 alert("Wrong at block " + (i + 1));
                 alert("Width/Height should be between 100 and 1500.\n Floor maximum to 10");
-                
+
             }
 
 
@@ -114,8 +114,8 @@ function validateBasicInfo() {
 
 
     if (validation) { // check if pass the validation then proceed to editor mode
-        
-        proceedToEditor(parkingLot,blocks,floors);
+
+        proceedToEditor(parkingLot, blocks, floors);
     }
 
 }
