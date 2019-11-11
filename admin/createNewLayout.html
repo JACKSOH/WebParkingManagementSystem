@@ -74,17 +74,18 @@
                                                         style="background-color: whitesmoke">
                                                 </canvas>
 
-                                                <br />Message1: <label id="message">N/A</label>
-                                                <br />Message2: <label id="message1">N/A</label>
+                                                <br /> <label id="parkingWidth">N/A</label>
+                                                <br /> <label id="parkingHeight">N/A</label>
                                         </div>
                                 </div>
+                                <button onclick="submitLayout()">Submit New Layout</button>
                         </div>
                 </div>
 
         </div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase.js"></script>
         <script src="/js/FirebaseInit.js"></script>
         <script src="/js/LayoutManager.js"></script>
         <script src="/js/LayoutManagerForCanvas.js"></script>

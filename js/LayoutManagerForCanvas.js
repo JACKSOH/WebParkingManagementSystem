@@ -1,7 +1,7 @@
 var draggedComps = []; // init dragged comp arrays
 var comps = []; //init comp array
 var selectedComp, selectEditComp; // index of the Component selecting
-var Ecanvas, Ccanvas = false; // canvas objects
+var Ecanvas, Ccanvas, blockdd, floordd = false; // canvas objects
 var previouseSelectedBlock = false;
 var previouseSelectedFloor = false;
 var selectedFloorIndex = false;
@@ -45,17 +45,19 @@ class slot extends component {
 }
 //definition for component class
 function updateFloorBlockIndex() {
-    
+
 }
 function proceedToEditor(parkingLot, blocks, floors) { //function to create the layout
     isDragging = false;
     document.getElementById("basicContainer").style.display = "none";
     document.getElementById("layoutContainer").style.display = "block";
+    blockdd = document.getElementById("blockdd");
+    floordd = document.getElementById("floordd");
     // when the function called initialize these 
-    var exit = new basic(40, 20, 50, 40, "exit", "");
-    var entry = new basic(40, 80, 50, 40, "entry", "");
-    var block = new basic(150, 20, 50, 40, "entrance", "");
-    var slot = new basic(150, 80, 50, 40, "slot", "");
+    var exit = new basic(40, 20, 30, 30, "exit", "");
+    var entry = new basic(40, 80, 30, 30, "entry", "");
+    var block = new basic(150, 20, 30, 30, "entrance", "");
+    var slot = new basic(150, 80, 30, 30, "slot", "");
     comps.push(exit); //dummy
     comps.push(entry);
     comps.push(block);
@@ -100,8 +102,8 @@ function initStatus() {
     previouseSelectedBlock = blockdd.options[0].id;
     for (var i = 0; i < floors.length; i++) {
         var floor = floors[i];
-
-        floors[i] = { blockid: floor.blockid, floorid: floor.floorid, width: floor.width, height: floor.height, draggedComps: draggedComps };
+        var initDraggedComps = [];
+        floors[i] = { blockid: floor.blockid, floorid: floor.floorid, width: floor.width, height: floor.height, draggedComps: initDraggedComps };
 
         if (floor.blockid === blockdd.options[0].id) {
             var opt = document.createElement("option");
@@ -206,7 +208,7 @@ function mouseDown(e) { //the event for mouse down
         my = mouseOnCanvas.y;
         startX = mx;
         startY = my;
-        for (var i = 0; i < comps.length; i++) {//check collife any component
+        for (var i = 0; i < comps.length; i++) {//check collide any component
             var c = comps[i];
             if (mx > c.x && mx < c.x + c.w && my > c.y && my < c.y + c.h) {
                 compStartX = c.x;
@@ -218,6 +220,7 @@ function mouseDown(e) { //the event for mouse down
                 selectedComp = i;
             }
         }
+        saveDraggedCompsToFloor(); // after add the drgged comps save to the floor array
 
     } else if (e.target.id === "editCanvas") {//for editor
 
@@ -285,7 +288,7 @@ function mouseMove(e) {
             var dx = mxt - startX; // distance of the mouse move
             var dy = myt - startY;
             if (isParkingSlotSide) { // if is in the parking slot side
-                document.getElementById("message1").innerHTML = draggedComps[selectEditComp].h;
+
                 Ecanvas.style.cursor = "ew-resize";
                 if (draggedComps[selectEditComp].w > 30) {
                     draggedComps[selectEditComp].w += dx;
@@ -335,7 +338,7 @@ function trackResizeSlot(e) { // track whether the mouse cursor is at the parkin
         myt = mouseOnCanvas.y;
         draggedComps.forEach(function (draggedComp) { // check if the mouse is ar the parking slot comp
             if (draggedComp.name === "slot") { // if match any start checking on the mouse cursor
-                document.getElementById("message").innerHTML = mxt;
+
 
                 if (mxt > (draggedComp.x + draggedComp.w - 5) && mxt < (draggedComp.x + draggedComp.w) && myt > draggedComp.y && myt < (draggedComp.y + draggedComp.h)) { //default to five
 
@@ -351,46 +354,117 @@ function trackResizeSlot(e) { // track whether the mouse cursor is at the parkin
 
     return tracked;
 }
-function changeFloor(e) {
-    
-    
-    var blockdd = document.getElementById("blockdd");
-    var floordd = document.getElementById("floordd");
-    
-    for (var i = 0; i < floors.length; i++){ // save the design for the previous floor
+function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to the floor 
+    for (var i = 0; i < floors.length; i++) { // save the design for the previous floor
         var f = floors[i];
         if (f.floorid === previouseSelectedFloor && f.blockid === previouseSelectedBlock) {
-            alert(floors[i].floorid);
-            floors[i].draggedComps = draggedComps;
-            draggedComps = [];
-            
-            
+            f.draggedComps = draggedComps; // try
         }
     }
-    alert(draggedComps.length);
+}
+function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
-        
+
         if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
-            alert(floor.floorid);
             draggedComps = floor.draggedComps;
         }
     });
+}
+function changeFloor(e) {
+    saveDraggedCompsToFloor();
+    retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
+
     previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
     previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
     changeEditorCanvasSize();
-   
+
+
 }
 function changeEditorCanvasSize() {
     var blockdd = document.getElementById("blockdd");
     var floordd = document.getElementById("floordd");
-
+    
     var selectedBlock = blockdd.options[blockdd.selectedIndex].id;
     var selectedFloor = floordd.options[floordd.selectedIndex].id;
 
     floors.forEach(function (floor) {
         if (floor.blockid === selectedBlock && floor.floorid === selectedFloor) {
-            Ecanvas.style.width = floor.width;
-            Ecanvas.style.height = floor.height;
+            var actualHeightRate = 10;
+            var actualWidthRate = 10;
+            ec.canvas.width = floor.width * actualWidthRate;
+            ec.canvas.height = floor.height * actualHeightRate;
+            document.getElementById("parkingWidth").innerHTML = "Width : "+ floor.width +" (m)";
+            document.getElementById("parkingHeight").innerHTML = "height : " + floor.height +" (m)";
+            alert(floor.width);
         }
     });
+}
+function submitLayout() {
+    alert();
+    if (validateLayout()) {
+        saveParkingLayout();
+    }
+}
+function validateLayout() {
+    var validation = true;
+    if (!(floors.length === 0) || !(blocks.length === 0)) {
+        for (var i = 0; i < floors.length; i++) { // check draggedcomps in each floor has item
+            f = floors[i];
+
+            if (f.draggedComps.length === 0) {
+                alert("Not all floor complete!!");
+                return false;
+            }
+        }
+        // valid for parking slot id is filled have not done yet
+    }
+    return validation;
+}
+function saveParkingLayout() {
+
+    var lotRef = firebase.database().ref().child("ParkingLots"); // parking lot reference
+    var blockRef = firebase.database().ref().child("Blocks");// block reference
+    var floorRef = firebase.database().ref().child("Floors");// floor reference
+    var compsRef = firebase.database().ref().child("Comps");// components reference
+    var lotKey = lotRef.push({
+        company: parkingLot.company,
+        createdBy: parkingLot.createdBy
+    }).key;
+
+
+    blocks.forEach(function (b) { // b stand for block
+        var blockKey = blockRef.push({
+            parkingLotid: lotKey,
+            blockName: b.blockName
+        }).key;
+        floors.forEach(function (f) { //f stand for floor
+
+            if (f.blockid === b.blockid) {
+                var floorKey = floorRef.push({
+                    blockid: blockKey,
+                    floorName: f.floorid,
+                    floorWidth: f.width,
+                    floorHeight: f.height,
+                }).key;
+            }
+            f.draggedComps.forEach(function (c) { // c stand for components
+
+                compsRef.push({
+                    floorid: floorKey,
+                    w: c.w,
+                    h: c.h,
+                    x: c.x,
+                    y: c.y,
+                });
+            });
+        });
+    });
+    alert("New Parking Layout Created!");
+
+    setTimeout(reloadPage, 2000);
+
+
+}
+function reloadPage() {
+    location.reload();
 }

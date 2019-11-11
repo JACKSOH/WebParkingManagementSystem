@@ -1,21 +1,24 @@
 initFirebase();
 
 function initFirebase() {
-    var firebaseConfig = {
-        apiKey: "AIzaSyAocUMZb2k47JE6HYO2jqsa1GZ8djHUB5k",
-        authDomain: "parking-management-syste-d2bff.firebaseapp.com",
-        databaseURL: "https://parking-management-syste-d2bff.firebaseio.com",
-        projectId: "parking-management-syste-d2bff",
-        storageBucket: "parking-management-syste-d2bff.appspot.com",
-        messagingSenderId: "211093333348",
-        appId: "1:211093333348:web:8f83cabb5ecc0086550671",
-        measurementId: "G-YYG5G946DB"
-    };
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAocUMZb2k47JE6HYO2jqsa1GZ8djHUB5k",
+    authDomain: "parking-management-syste-d2bff.firebaseapp.com",
+    databaseURL: "https://parking-management-syste-d2bff.firebaseio.com",
+    projectId: "parking-management-syste-d2bff",
+    storageBucket: "parking-management-syste-d2bff.appspot.com",
+    messagingSenderId: "211093333348",
+    appId: "1:211093333348:web:8f83cabb5ecc0086550671",
+    measurementId: "G-YYG5G946DB"
+  };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 }
 
 firebase.auth().onAuthStateChanged(function (user) {
+    
+    
     if (user) {
         var welcomeMessage = document.getElementById("welcome");
         if (welcomeMessage) {
@@ -29,7 +32,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         if (user != null) {
             var email_id = user.email;
         }
-    } else {
+    }else{
       
         var isSignout = JSON.parse(getCookie("isSignout"));
       
@@ -66,4 +69,11 @@ function setCookie(name, value, days) {
     }
     else var expires = "";
     document.cookie = name+"="+value+expires+"; path=/";
+}
+function logout() {
+    firebase.auth().signOut().then(function() {
+        alert("You have Signed OUT.");
+      }).catch(function(error) {
+          alert(error);
+      });
 }

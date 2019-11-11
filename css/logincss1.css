@@ -88,6 +88,7 @@ div.content {
     color: white;
     float: left;
     text-align: left;
+    font-size:20px;
 }
 
 div.blockContainer {
@@ -238,8 +239,6 @@ button:hover {
 .editorContainer {
     
     margin-left: 200px;
-    
-   
 }
 
 .editor , .component{
