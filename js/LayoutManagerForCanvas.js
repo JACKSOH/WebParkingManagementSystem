@@ -1,5 +1,6 @@
 var draggedComps = []; // init dragged comp arrays
 var comps = []; //init comp array
+var parkingSlots = []; // init parking slot array
 var selectedComp, selectEditComp; // index of the Component selecting
 var Ecanvas, Ccanvas, blockdd, floordd = false; // canvas objects
 var previouseSelectedBlock = false;
@@ -15,6 +16,9 @@ var startX, startY;
 var mouseOnCanvas; // declare mouse on which cavas
 var mx, my;//declare mouse location X and Y
 var EcanvasWidth, EcanvasHeight, CcanvasWidth, CcanvasHeight; //pass the ecanvas and ccanvas w,h within this class
+var parkingSlotSize = 30;// parking slot size
+
+//definition for component class
 
 var compStartX, compStartY; //declare componenet origina location
 // definition for component class
@@ -43,10 +47,7 @@ class slot extends component {
         this.quantity = quantity;
     }
 }
-//definition for component class
-function updateFloorBlockIndex() {
 
-}
 function proceedToEditor(parkingLot, blocks, floors) { //function to create the layout
     isDragging = false;
     document.getElementById("basicContainer").style.display = "none";
@@ -258,21 +259,31 @@ function mouseUp(e) {
         mouseOnCanvas = new getMousePos(Ecanvas, e);
         mx = mouseOnCanvas.x;
         my = mouseOnCanvas.y;
-        if (mx > del.x && mx < del.x + del.w && my > del.y && my < del.y + del.h) {
-            var selName = draggedComps[selectEditComp].name; // save the selected dragged component name before it deleted
-            draggedComps.splice(selectEditComp, 1);
-            alert(selName + " has been deleted.");
+        deleteComps(mx, my);
+        if (isSpecificComponet("slot")) {
+            alert("yes");
+            var slotFit = checkParkingSlotFit(draggedComps[selectEditComp].w); // check how many slot fit fot the parking slot drag
+            
+            storeEachSlotToParkingSLot(slotFit);
+            alert(parkingSlots.length);
         }
-
+        
         selectEditComp = false;
     }
 
     isDragging = false;
     isParkingSlotSide = false;
 }
+function deleteComps(mx, my) { // check if its match the designated deleted location
+    if (mx > del.x && mx < del.x + del.w && my > del.y && my < del.y + del.h) {
+        var selName = draggedComps[selectEditComp].name; // save the selected dragged component name before it deleted
+        draggedComps.splice(selectEditComp, 1);
+        alert(selName + " has been deleted.");
+    }
+}
 function mouseMove(e) {
 
-    if (isDragging) {
+    if (isDragging) { // if the the dragged components has been pressed
         if (e.target.id === "compCanvas") { //move the selected in canvas
             mouseOnCanvas = new getMousePos(Ccanvas, e);
             mxt = mouseOnCanvas.x;
@@ -288,17 +299,9 @@ function mouseMove(e) {
             var dx = mxt - startX; // distance of the mouse move
             var dy = myt - startY;
             if (isParkingSlotSide) { // if is in the parking slot side
-
-                Ecanvas.style.cursor = "ew-resize";
-                if (draggedComps[selectEditComp].w > 30) {
-                    draggedComps[selectEditComp].w += dx;
-                } else {
-                    draggedComps[selectEditComp].w = 31;
-                }
-
-            } else { // if not parkign slot start moving
-                draggedComps[selectEditComp].x += dx;
-                draggedComps[selectEditComp].y += dy;
+                resizeParkingSlot(dx, dy);
+            } else { // if not parking slot start moving component
+                moveDraggedComps(dx, dy)
             }
 
         }
@@ -318,6 +321,7 @@ function mouseMove(e) {
 
     }
 }
+
 function mouseOut(e) {
     if (e.target.id === "compCanvas") {
 
@@ -328,6 +332,10 @@ function mouseOut(e) {
         isDragging = false;
         selectEditComp = false;
     }
+}
+function moveDraggedComps(dx, dy) {
+    draggedComps[selectEditComp].x += dx;
+    draggedComps[selectEditComp].y += dy;
 }
 function trackResizeSlot(e) { // track whether the mouse cursor is at the parking slot side
     var tracked = false;
@@ -340,7 +348,7 @@ function trackResizeSlot(e) { // track whether the mouse cursor is at the parkin
             if (draggedComp.name === "slot") { // if match any start checking on the mouse cursor
 
 
-                if (mxt > (draggedComp.x + draggedComp.w - 5) && mxt < (draggedComp.x + draggedComp.w) && myt > draggedComp.y && myt < (draggedComp.y + draggedComp.h)) { //default to five
+                if (mxt > (draggedComp.x + draggedComp.w - 2) && mxt < (draggedComp.x + draggedComp.w + 1) && myt > draggedComp.y && myt < (draggedComp.y + draggedComp.h)) { //default to five
 
                     tracked = true;
 
@@ -353,6 +361,14 @@ function trackResizeSlot(e) { // track whether the mouse cursor is at the parkin
     }
 
     return tracked;
+}
+function resizeParkingSlot(dx, dy) {
+    Ecanvas.style.cursor = "ew-resize";
+    if (draggedComps[selectEditComp].w > 30) {
+        draggedComps[selectEditComp].w += dx;
+    } else {
+        draggedComps[selectEditComp].w = 31;
+    }
 }
 function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to the floor 
     for (var i = 0; i < floors.length; i++) { // save the design for the previous floor
@@ -383,7 +399,7 @@ function changeFloor(e) {
 function changeEditorCanvasSize() {
     var blockdd = document.getElementById("blockdd");
     var floordd = document.getElementById("floordd");
-    
+
     var selectedBlock = blockdd.options[blockdd.selectedIndex].id;
     var selectedFloor = floordd.options[floordd.selectedIndex].id;
 
@@ -393,8 +409,8 @@ function changeEditorCanvasSize() {
             var actualWidthRate = 10;
             ec.canvas.width = floor.width * actualWidthRate;
             ec.canvas.height = floor.height * actualHeightRate;
-            document.getElementById("parkingWidth").innerHTML = "Width : "+ floor.width +" (m)";
-            document.getElementById("parkingHeight").innerHTML = "height : " + floor.height +" (m)";
+            document.getElementById("parkingWidth").innerHTML = "Width : " + floor.width + " (m)";
+            document.getElementById("parkingHeight").innerHTML = "height : " + floor.height + " (m)";
             alert(floor.width);
         }
     });
@@ -467,4 +483,34 @@ function saveParkingLayout() {
 }
 function reloadPage() {
     location.reload();
+}
+// for coomponent detection when dragging, can use for any component
+function isSpecificComponet(compsName) {
+    if (draggedComps[selectEditComp].name === compsName) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkParkingSlotFit(width) {
+    return Math.floor(width / 25);
+}
+function storeEachSlotToParkingSLot(quantity) {
+    var currentDraggedComps = draggedComps[selectEditComp];
+    var currentX = currentDraggedComps.w;
+    var currentY = currentDraggedComps.y;
+    var w = currentDraggedComps.w;
+    var h = currentDraggedComps.h;
+
+    for (var i = 0; i < quantity; i++){
+        var parkingSlot = {
+            x: currentX,
+            y: currentY,
+            w: w,
+            h:h
+        }
+        parkingSlots.push(parkingSlot);
+        currentX += parkingSlotSize; // 30 is the parking slot size
+    }
 }
