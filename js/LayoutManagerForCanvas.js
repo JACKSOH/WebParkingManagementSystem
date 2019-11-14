@@ -9,6 +9,7 @@ var selectedFloorIndex = false;
 var selectedBlockIndex = false;
 var isDragging = false;
 var isParkingSlotSide = false;
+var isParkingSlotSideHor = false;
 var del = false;
 var delHover = false;
 var ec, cc = false; //canavas with context objects
@@ -285,6 +286,7 @@ function mouseUp(e) {
 
     isDragging = false;
     isParkingSlotSide = false;
+    isParkingSlotSideHor = false;
 }
 function mouseMove(e) {
 
@@ -305,8 +307,10 @@ function mouseMove(e) {
             var dy = myt - startY;
             if (isParkingSlotSide) { // if is in the parking slot side
                 resizeParkingSlot(dx, dy);
-            } else { // if not parking slot start moving component
-                moveDraggedComps(dx, dy)
+            } else if (isParkingSlotSideHor) { // if not parking slot start moving component
+                resizeParkingSlotHor(dx, dy);
+            } else {
+                moveDraggedComps(dx, dy);
             }
 
         }
@@ -319,6 +323,9 @@ function mouseMove(e) {
             if (trackResizeSlot(e)) { // if yes change the mouse cursor
                 Ecanvas.style.cursor = "ew-resize";
                 isParkingSlotSide = true;//if can try to remove it
+            } else if (trackResizeSlotForHor(e)) {
+                Ecanvas.style.cursor = "ns-resize";
+                isParkingSlotSideHor = true;
             } else {
                 Ecanvas.style.cursor = "default";
             }
@@ -351,11 +358,11 @@ function mouseDbClick(e) {
                         var response = confirm("Do you want to continue the number for the rest of the parking lot. \n E.g A1,A2,A3 ...");
                         if (response) {
                             var prefixIndex = findPrefixIndex(slotName);
-                            var prefix = slotName.substring(0, prefixIndex+1);
-                            
-                            var suffix = parseInt(slotName.substring(prefixIndex+1, slotName.length ));
+                            var prefix = slotName.substring(0, prefixIndex + 1);
+
+                            var suffix = parseInt(slotName.substring(prefixIndex + 1, slotName.length));
                             for (var i = slotIndex; i < slot.length; i++) {
-                                draggedComps[selectEditComp].parkingSlots[i].name = prefix +suffix;
+                                draggedComps[selectEditComp].parkingSlots[i].name = prefix + suffix;
                                 suffix++;
                             }
                         } else {
@@ -382,7 +389,7 @@ function checkAndComponentsCollide(canvas, e) { // pass the parameter and will c
     mouseOnCanvas = new getMousePos(canvas, e);
     mx = mouseOnCanvas.x;
     my = mouseOnCanvas.y;
-    
+
     startX = mx;
     startY = my;
     for (var i = 0; i < draggedComps.length; i++) {
@@ -399,7 +406,7 @@ function checkAndComponentsCollide(canvas, e) { // pass the parameter and will c
 function findPrefixIndex(name) {
     var prefix = 0;
     for (var i = 0; i < name.length; i++) {
-        
+
         if (name.charAt(i).match(/^([A-Z])$/)) {
             prefix = i;
         } else {
@@ -417,7 +424,7 @@ function isSpecificComponet(compsName) {// for component detection when dragging
         }
     }
 }
-//change floor
+// function for change floor
 function changeFloor(e) {
     saveDraggedCompsToFloor();
     retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
@@ -490,7 +497,6 @@ function deleteComps(mx, my) { // check if its match the designated deleted loca
 function trackResizeSlot(e) { // track whether the mouse cursor is at the parking slot side
     var tracked = false;
     try {
-
         mouseOnCanvas = new getMousePos(Ecanvas, e);
         mxt = mouseOnCanvas.x;
         myt = mouseOnCanvas.y;
@@ -518,6 +524,7 @@ function checkWhichParkingSlot(slot, e) { // will return the index
         }
     }
 }
+
 function resizeParkingSlot(dx, dy) {
     Ecanvas.style.cursor = "ew-resize";
     if (draggedComps[selectEditComp].w > 30) {
@@ -526,6 +533,37 @@ function resizeParkingSlot(dx, dy) {
         draggedComps[selectEditComp].w = 31;
     }
 }
+//maintain the Parking Slot Component (Horizontal)
+function trackResizeSlotForHor(e) { // track whether the mouse cursor is at the parking slot side (horinzontal)
+    var tracked = false;
+    try {
+        mouseOnCanvas = new getMousePos(Ecanvas, e);
+        mxt = mouseOnCanvas.x;
+        myt = mouseOnCanvas.y;
+        draggedComps.forEach(function (draggedComp) { // check if the mouse is ar the parking slot comp
+            if (draggedComp.name === slotLabelHor) {
+
+                if (mxt > draggedComp.x && mxt < (draggedComp.x + draggedComp.w) && myt > (draggedComp.y + draggedComp.h - 3) && myt < (draggedComp.y + draggedComp.h + 3)) { //default to five
+
+                    tracked = true;
+                }
+            }
+        });
+    } catch (e) {
+        alert(e);
+    }
+
+    return tracked;
+}
+function resizeParkingSlotHor(dx, dy) {
+    Ecanvas.style.cursor = "ns-resize";
+    if (draggedComps[selectEditComp].h > 30) {
+        draggedComps[selectEditComp].h += dy;
+    } else {
+        draggedComps[selectEditComp].h = 31;
+    }
+}
+
 //function when submitting the layout
 function submitLayout() {
 
@@ -617,7 +655,7 @@ function deleteParkingSlot(quantity) {
     var currentDraggedComps = draggedComps[selectEditComp];
     var parkingSlots = currentDraggedComps.parkingSlots;
     draggedComps[selectEditComp].parkingSlots.splice(quantity, parkingSlots.length - quantity + 1); // index , how many
-    
+
 }
 function storeParkingSlots(quantity) {
     var currentDraggedComps = draggedComps[selectEditComp];
@@ -644,3 +682,34 @@ function adjustParkingSlotComponent() {
     draggedComps[selectEditComp].w = draggedComps[selectEditComp].parkingSlots.length * parkingSlotSize;
 }
 
+// for parking slot in the Parking Slot Component (Horizontal)
+function checkParkingSlotFitHor(height) { // will return integer
+    var slotFit = Math.floor(height / parkingSlotSize);
+
+    return slotFit;
+}
+
+function storeParkingSlotsHor(quantity) { //store for horizontal component 
+    var currentDraggedComps = draggedComps[selectEditComp];
+    var currentX = currentDraggedComps.x;
+    var currentY = currentDraggedComps.y + (currentDraggedComps.parkingSlots.length * 30); // start from the last location
+    var w = parkingSlotSize;
+    var h = currentDraggedComps.h;
+    var addQuantity = quantity - currentDraggedComps.parkingSlots.length // calculate how much need to be added
+    for (var i = 0; i < addQuantity; i++) { // loop each the extra quantity slot needed
+        var parkingSlot = {
+            name: "",
+            status: "",
+            x: currentX,
+            y: currentY,
+            w: w,
+            h: h
+        }
+        draggedComps[selectEditComp].parkingSlots.push(parkingSlot);
+        currentX += parkingSlotSize; // 30 is the parking slot size
+    }
+
+}
+function adjustParkingSlotComponent() {
+    draggedComps[selectEditComp].w = draggedComps[selectEditComp].parkingSlots.length * parkingSlotSize;
+}
