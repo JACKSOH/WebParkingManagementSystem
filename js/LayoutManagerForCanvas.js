@@ -67,8 +67,7 @@ function proceedToEditor(parkingLot, blocks, floors) { //function to create the 
     comps.push(slot);
     comps.push(slotHor);
     Ecanvas = document.getElementById("editCanvas");
-    EcanvasHeight = Ecanvas.height;
-    EcanvasWidth = Ecanvas.width;
+
     ec = Ecanvas.getContext("2d"); //ec stand for editor canvas
 
     Ccanvas = document.getElementById("compCanvas");
@@ -103,8 +102,7 @@ function initStatus() {
         blockdd.add(opt);
     });
 
-    blockdd.selectedIndex = "0";
-    previouseSelectedBlock = blockdd.options[0].id;
+
     for (var i = 0; i < floors.length; i++) {
         var floor = floors[i];
         var initDraggedComps = [];
@@ -118,7 +116,8 @@ function initStatus() {
             floordd.add(opt);
         }
     }
-
+    blockdd.selectedIndex = "0";
+    previouseSelectedBlock = blockdd.options[0].id;
     floordd.selectedIndex = "0";
     changeEditorCanvasSize();
     previouseSelectedFloor = floordd.options[0].id;
@@ -180,22 +179,31 @@ function rectForEC(x, y, w, h, name) { //for Editor Canvas
         ec.rect(x, y, w, h);
         ec.stroke();
     }
-    if (!(name === slotLabel)) {
+    if (!(name === slotLabel) && !(name === slotLabelHor)) {
         ec.fillText(name, (x + 2), (y + h) + 10);
     }
+}
+function rectForECslot(x, y, w, h, name) { //draw for parking slot
+    ec.beginPath();
+    ec.lineWidth = "3";
+    ec.strokeStyle = "red";
+    ec.font = "10px Arial";
+    ec.rect(x, y, w, h);
+    ec.stroke();
+    ec.fillText(name, x + 3, (y + h / 2));
 }
 function drawEditor() {
     ec.clearRect(0, 0, EcanvasWidth, EcanvasHeight);
     for (var i = 0; i < draggedComps.length; i++) {
         var c = draggedComps[i];
         rectForEC(c.x, c.y, c.w, c.h, c.name);
-        if (c.name === slotLabel) {
+        if (c.name === slotLabel || c.name === slotLabelHor) {
 
             if (c.parkingSlots.length > 0) {
 
                 var slot = c.parkingSlots;
                 slot.forEach(function (s) {
-                    rectForEC(s.x, s.y, s.w, s.h, s.name);
+                    rectForECslot(s.x, s.y, s.w, s.h, s.name);
                 });
 
             }
@@ -212,8 +220,6 @@ function drawEditor() {
 
     }
 }
-
-
 //event for mouse
 function mouseDown(e) { //the event for mouse down
     if (e.target.id === "compCanvas") { //check box in comp canvas
@@ -230,7 +236,7 @@ function mouseDown(e) { //the event for mouse down
                 isDragging = true;
                 //add to dragged component
                 var newComp = false;
-                if (c.name === slotLabel) {  // check if the name is slot
+                if (c.name === slotLabel || c.name === slotLabelHor) {  // check if the name is parking slot for vertical or horizontal
                     var parkingSlots = [];
                     newComp = { // declare a new componet 
                         x: 60,
@@ -270,7 +276,7 @@ function mouseUp(e) {
         mx = mouseOnCanvas.x;
         my = mouseOnCanvas.y;
         deleteComps(mx, my);
-        if (isSpecificComponet(slotLabel)) {
+        if (isSpecificComponet(slotLabel)) { // for vertical parking slot
 
             var slotFit = checkParkingSlotFit(draggedComps[selectEditComp].w); // check how many slot fit fot the parking slot drag
             if (isAnyExistParkingSlotAffected(slotFit)) {
@@ -280,6 +286,14 @@ function mouseUp(e) {
                 storeParkingSlots(slotFit);
             }
             adjustParkingSlotComponent();
+        } else if (isSpecificComponet(slotLabelHor)) {// for horizontal parking slot
+            var slotFit = checkParkingSlotFitHor(draggedComps[selectEditComp].h); // check how many slot fit fot the parking slot drag
+            if (isAnyExistParkingSlotAffected(slotFit)) {
+                deleteParkingSlot(slotFit);
+            } else {
+                storeParkingSlotsHor(slotFit);
+            }
+            adjustParkingSlotComponentHor();
         }
         selectEditComp = false;
     }
@@ -348,32 +362,34 @@ function mouseDbClick(e) {
 
     if (e.target.id === "editCanvas") {
         if (checkAndComponentsCollide(Ecanvas, e)) {
-            var slot = draggedComps[selectEditComp].parkingSlots;
-            var slotIndex = checkWhichParkingSlot(slot, e);
-            var slotName = prompt("Please enter the slot name. \n E.g A1");
-            if (slotName) {
-                var regex = new RegExp(/^([A-Z]+\d+)$/);
-                if (slotName) { // check the slotName have anything
-                    if (regex.test(slotName)) { // check whether the type match regex Currently support string infront and interger follow behind
-                        var response = confirm("Do you want to continue the number for the rest of the parking lot. \n E.g A1,A2,A3 ...");
-                        if (response) {
-                            var prefixIndex = findPrefixIndex(slotName);
-                            var prefix = slotName.substring(0, prefixIndex + 1);
+            var dc = draggedComps[selectEditComp];
+            if (dc.name === slotLabelHor || dc.name === slotLabel) {
+                var slot = dc.parkingSlots;
+                var slotIndex = checkWhichParkingSlot(slot, e);
+                var slotName = prompt("Please enter the slot name. \n E.g A1");
+                if (slotName) {
+                    var regex = new RegExp(/^([A-Z]+\d+)$/);
+                    if (slotName) { // check the slotName have anything
+                        if (regex.test(slotName)) { // check whether the type match regex Currently support string infront and interger follow behind
+                            var response = confirm("Do you want to continue the number for the rest of the parking lot. \n E.g A1,A2,A3 ...");
+                            if (response) {
+                                var prefixIndex = findPrefixIndex(slotName);
+                                var prefix = slotName.substring(0, prefixIndex + 1);
 
-                            var suffix = parseInt(slotName.substring(prefixIndex + 1, slotName.length));
-                            for (var i = slotIndex; i < slot.length; i++) {
-                                draggedComps[selectEditComp].parkingSlots[i].name = prefix + suffix;
-                                suffix++;
+                                var suffix = parseInt(slotName.substring(prefixIndex + 1, slotName.length));
+                                for (var i = slotIndex; i < slot.length; i++) {
+                                    draggedComps[selectEditComp].parkingSlots[i].name = prefix + suffix;
+                                    suffix++;
+                                }
+                            } else {
+                                draggedComps[selectEditComp].parkingSlots[slotIndex].name = slotName;
                             }
                         } else {
                             draggedComps[selectEditComp].parkingSlots[slotIndex].name = slotName;
                         }
-                    } else {
-                        draggedComps[selectEditComp].parkingSlots[slotIndex].name = slotName;
                     }
                 }
             }
-
         }
     }
 }
@@ -426,9 +442,23 @@ function isSpecificComponet(compsName) {// for component detection when dragging
 }
 // function for change floor
 function changeFloor(e) {
+    var selectedBlock = blockdd.options[blockdd.selectedIndex];
+    floors.forEach(function (f) {
+        if (floors.blockid === selectedBlock.id) {
+            alert();
+            //clean all selection 1st
+            for (var i = 0; i < floordd.options.length; i++) {
+                floorid.remove(i);
+            }
+        
+            var opt = document.createElement("option");
+            opt.id = floors.blockid;
+            opt.value = floors.blockName;
+            opt.innerHTML = floors.blockName;
+        }
+    });
     saveDraggedCompsToFloor();
     retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
-
     previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
     previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
     changeEditorCanvasSize();
@@ -448,6 +478,8 @@ function changeEditorCanvasSize() {
             var actualWidthRate = 10;
             ec.canvas.width = floor.width * actualWidthRate;
             ec.canvas.height = floor.height * actualHeightRate;
+            EcanvasHeight = Ecanvas.height;
+            EcanvasWidth = Ecanvas.width;
             document.getElementById("parkingWidth").innerHTML = " Width : " + floor.width + " (m)";
             document.getElementById("parkingHeight").innerHTML = " Height : " + floor.height + " (m)";
 
@@ -475,7 +507,7 @@ function moveDraggedComps(dx, dy) {
     var c = draggedComps[selectEditComp];
     c.x += dx;
     c.y += dy;
-    if (c.name === slotLabel) { // if the comps got parking slot update the position also
+    if (c.name === slotLabel || c.name === slotLabelHor) { // if the comps got parking slot update the position also
         slot = c.parkingSlots;
         if (slot) {
             slot.forEach(function (s) { // if the parking slot move other parking specific slot move tgt
@@ -569,6 +601,11 @@ function submitLayout() {
 
     if (validateLayout()) {
         saveParkingLayout();
+    } else {
+        var response = confirm("Not all floor have componenets. \n Do you want to continue?")
+        if (response) {
+            saveParkingLayout();
+        }
     }
 }
 function validateLayout() {
@@ -578,7 +615,7 @@ function validateLayout() {
             f = floors[i];
 
             if (f.draggedComps.length === 0) {
-                alert("Not all floor complete!!");
+
                 return false;
             }
         }
@@ -587,14 +624,22 @@ function validateLayout() {
     return validation;
 }
 function saveParkingLayout() {
-
+    var response = confirm("Is this layout ready to use?");
     var lotRef = firebase.database().ref().child("ParkingLots"); // parking lot reference
     var blockRef = firebase.database().ref().child("Blocks");// block reference
     var floorRef = firebase.database().ref().child("Floors");// floor reference
     var compsRef = firebase.database().ref().child("Comps");// components reference
+    var slotRef = firebase.database().ref().child("ParkingSlot");// components reference
+    var parkingLotStatus = "";
+    if (response) {
+        parkingLotStatus = "available"
+    } else {
+        parkingLotStatus = "unavailable"
+    }
     var lotKey = lotRef.push({
         company: parkingLot.company,
-        createdBy: parkingLot.createdBy
+        createdBy: parkingLot.createdBy,
+        status: parkingLotStatus
     }).key;
 
 
@@ -615,13 +660,26 @@ function saveParkingLayout() {
             }
             f.draggedComps.forEach(function (c) { // c stand for components
 
-                compsRef.push({
+                var compKey = compsRef.push({
                     floorid: floorKey,
                     w: c.w,
                     h: c.h,
                     x: c.x,
                     y: c.y,
-                });
+                }).key;
+                var ps = c.parkingSlots; // to save parking slot
+                if (ps) {
+                    ps.forEach(function (s) {
+                        var slotKey = slotRef.push({
+                            compid: compKey,
+                            name: s.name,
+                            x: s.x,
+                            y: s.y,
+                            w: s.w,
+                            h: s.h
+                        }).key;
+                    });
+                }
             });
         });
     });
@@ -688,14 +746,13 @@ function checkParkingSlotFitHor(height) { // will return integer
 
     return slotFit;
 }
-
 function storeParkingSlotsHor(quantity) { //store for horizontal component 
     var currentDraggedComps = draggedComps[selectEditComp];
     var currentX = currentDraggedComps.x;
     var currentY = currentDraggedComps.y + (currentDraggedComps.parkingSlots.length * 30); // start from the last location
-    var w = parkingSlotSize;
-    var h = currentDraggedComps.h;
-    var addQuantity = quantity - currentDraggedComps.parkingSlots.length // calculate how much need to be added
+    var w = currentDraggedComps.w;
+    var h = parkingSlotSize; // the height follow the parking slot size in horizontal way
+    var addQuantity = quantity - currentDraggedComps.parkingSlots.length // calculate how much parking slot need to be added
     for (var i = 0; i < addQuantity; i++) { // loop each the extra quantity slot needed
         var parkingSlot = {
             name: "",
@@ -706,10 +763,10 @@ function storeParkingSlotsHor(quantity) { //store for horizontal component
             h: h
         }
         draggedComps[selectEditComp].parkingSlots.push(parkingSlot);
-        currentX += parkingSlotSize; // 30 is the parking slot size
+        currentY += parkingSlotSize; // 30 is the parking slot size
     }
 
 }
-function adjustParkingSlotComponent() {
-    draggedComps[selectEditComp].w = draggedComps[selectEditComp].parkingSlots.length * parkingSlotSize;
+function adjustParkingSlotComponentHor() {
+    draggedComps[selectEditComp].h = draggedComps[selectEditComp].parkingSlots.length * parkingSlotSize;
 }
