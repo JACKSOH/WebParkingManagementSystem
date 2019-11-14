@@ -16,12 +16,11 @@ var startX, startY;
 var mouseOnCanvas; // declare mouse on which cavas
 var mx, my;//declare mouse location X and Y
 var EcanvasWidth, EcanvasHeight, CcanvasWidth, CcanvasHeight; //pass the ecanvas and ccanvas w,h within this class
-var slotLabel = "slot";
+var slotLabel = "SlotVertical"; // label for Vertical
+var slotLabelHor = "SlotHorinzontal" //label for horinzontal
 var parkingSlotSize = 30;// parking slot size
+var compStartX, compStartY; //declare componenet original location
 
-//definition for component class
-
-var compStartX, compStartY; //declare componenet origina location
 // definition for component class
 class component {
     constructor(x, y, w, h, name) {
@@ -48,7 +47,7 @@ class slot extends component {
         this.quantity = quantity;
     }
 }
-
+//initialize canvas
 function proceedToEditor(parkingLot, blocks, floors) { //function to create the layout
     isDragging = false;
     document.getElementById("basicContainer").style.display = "none";
@@ -59,11 +58,13 @@ function proceedToEditor(parkingLot, blocks, floors) { //function to create the 
     var exit = new basic(40, 20, 30, 30, "exit", "");
     var entry = new basic(40, 80, 30, 30, "entry", "");
     var block = new basic(150, 20, 30, 30, "entrance", "");
-    var slot = new basic(150, 80, 30, 30, slotLabel, "");
+    var slot = new basic(260, 20, 30, 60, slotLabel, "");
+    var slotHor = new basic(260, 100, 60, 30, slotLabelHor, "");
     comps.push(exit); //dummy
     comps.push(entry);
     comps.push(block);
     comps.push(slot);
+    comps.push(slotHor);
     Ecanvas = document.getElementById("editCanvas");
     EcanvasHeight = Ecanvas.height;
     EcanvasWidth = Ecanvas.width;
@@ -79,6 +80,7 @@ function proceedToEditor(parkingLot, blocks, floors) { //function to create the 
     Ecanvas.onmouseup = mouseUp;
     Ecanvas.onmousemove = mouseMove;
     Ecanvas.onmouseout = mouseOut;
+    Ecanvas.ondblclick = mouseDbClick;
     Ccanvas.onmousedown = mouseDown;
     Ccanvas.onmouseup = mouseUp;
     Ccanvas.onmousemove = mouseMove;
@@ -120,6 +122,8 @@ function initStatus() {
     changeEditorCanvasSize();
     previouseSelectedFloor = floordd.options[0].id;
 }
+
+// draw the canvas for each item has
 function rectForCC(x, y, w, h, name) {//for Component canvas
     var image = new Image();
     blocks.le
@@ -144,7 +148,7 @@ function rectForCC(x, y, w, h, name) {//for Component canvas
 
         cc.stroke();
     }
-    cc.fillText(name, (x + w / 2), (y + h) + 10);
+    cc.fillText(name, (x + 2), (y + h) + 10);
 }
 function drawComponent() {
 
@@ -154,7 +158,6 @@ function drawComponent() {
         rectForCC(c.x, c.y, c.w, c.h, c.name);
     }
 }
-
 function rectForEC(x, y, w, h, name) { //for Editor Canvas
     var image = new Image();
     if (name === "exit") {
@@ -173,17 +176,29 @@ function rectForEC(x, y, w, h, name) { //for Editor Canvas
         ec.lineWidth = "3";
         ec.strokeStyle = "red";
         ec.font = "10px Arial";
-
         ec.rect(x, y, w, h);
         ec.stroke();
     }
-    ec.fillText(name, (x + w / 2), (y + h) + 10);
+    if (!(name === slotLabel)) {
+        ec.fillText(name, (x + 2), (y + h) + 10);
+    }
 }
 function drawEditor() {
     ec.clearRect(0, 0, EcanvasWidth, EcanvasHeight);
     for (var i = 0; i < draggedComps.length; i++) {
         var c = draggedComps[i];
         rectForEC(c.x, c.y, c.w, c.h, c.name);
+        if (c.name === slotLabel) {
+
+            if (c.parkingSlots.length > 0) {
+
+                var slot = c.parkingSlots;
+                slot.forEach(function (s) {
+                    rectForEC(s.x, s.y, s.w, s.h, s.name);
+                });
+
+            }
+        }
     }
     if (isDragging) { // draw the cancel button if the comp start dragging
         var img = new Image();
@@ -196,13 +211,9 @@ function drawEditor() {
 
     }
 }
-function getMousePos(canvas, evt) { // get mouse position in canvas
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
+
+
+//event for mouse
 function mouseDown(e) { //the event for mouse down
     if (e.target.id === "compCanvas") { //check box in comp canvas
         mouseOnCanvas = new getMousePos(Ccanvas, e);
@@ -229,10 +240,8 @@ function mouseDown(e) { //the event for mouse down
                         imagePath: c.imagePath,
                         parkingSlots: parkingSlots
                     }
-                    alert(newComp.parkingSlots.length);
                 } else { // if the component is not a slot
                     newComp = new basic(40, 40, c.w, c.h, c.name);
-                    alert(newComp.x);
                 }
                 draggedComps.push(newComp); ///HERE GOT PROBLEM
                 selectedComp = i;
@@ -241,35 +250,18 @@ function mouseDown(e) { //the event for mouse down
         saveDraggedCompsToFloor(); // after add the drgged comps save to the floor array
 
     } else if (e.target.id === "editCanvas") {//for editor
-
-        mouseOnCanvas = new getMousePos(Ecanvas, e);
-        mx = mouseOnCanvas.x;
-        my = mouseOnCanvas.y;
-        startX = mx;
-        startY = my;
-
-        for (var i = 0; i < draggedComps.length; i++) {
-            var c = draggedComps[i];
-            if (mx > c.x && mx < c.x + c.w && my > c.y && my < c.y + c.h) {
-
-                isDragging = true;
-                //add to dragged component
-                selectEditComp = i;
-            }
+        if (checkAndComponentsCollide(Ecanvas, e)) {
+            isDragging = true;
         }
     }
-
-
 }
 function mouseUp(e) {
 
     if (e.target.id === "compCanvas") { //check box in comp canvas
-
-
-        comps[selectedComp].x = compStartX;
-        comps[selectedComp].y = compStartY;
-
-
+        if (comps[selectedComp].x) {
+            comps[selectedComp].x = compStartX;
+            comps[selectedComp].y = compStartY;
+        }
         selectedComp = false;
 
     } else if (e.target.id === "editCanvas") {
@@ -277,28 +269,22 @@ function mouseUp(e) {
         mx = mouseOnCanvas.x;
         my = mouseOnCanvas.y;
         deleteComps(mx, my);
-        if (isSpecificComponet("slot")) {
-            
+        if (isSpecificComponet(slotLabel)) {
+
             var slotFit = checkParkingSlotFit(draggedComps[selectEditComp].w); // check how many slot fit fot the parking slot drag
             if (isAnyExistParkingSlotAffected(slotFit)) {
-                deleteComps(slotFit);
 
+                deleteParkingSlot(slotFit);
             } else {
                 storeParkingSlots(slotFit);
             }
+            adjustParkingSlotComponent();
         }
         selectEditComp = false;
     }
 
     isDragging = false;
     isParkingSlotSide = false;
-}
-function deleteComps(mx, my) { // check if its match the designated deleted location
-    if (mx > del.x && mx < del.x + del.w && my > del.y && my < del.y + del.h) {
-        var selName = draggedComps[selectEditComp].name; // save the selected dragged component name before it deleted
-        draggedComps.splice(selectEditComp, 1);
-        alert(selName + " has been deleted.");
-    }
 }
 function mouseMove(e) {
 
@@ -340,7 +326,6 @@ function mouseMove(e) {
 
     }
 }
-
 function mouseOut(e) {
     if (e.target.id === "compCanvas") {
 
@@ -352,59 +337,87 @@ function mouseOut(e) {
         selectEditComp = false;
     }
 }
-function moveDraggedComps(dx, dy) {
-    draggedComps[selectEditComp].x += dx;
-    draggedComps[selectEditComp].y += dy;
-}
-function trackResizeSlot(e) { // track whether the mouse cursor is at the parking slot side
-    var tracked = false;
-    try {
+function mouseDbClick(e) {
 
-        mouseOnCanvas = new getMousePos(Ecanvas, e);
-        mxt = mouseOnCanvas.x;
-        myt = mouseOnCanvas.y;
-        draggedComps.forEach(function (draggedComp) { // check if the mouse is ar the parking slot comp
-            if (draggedComp.name === "slot") { // if match any start checking on the mouse cursor
-
-
-                if (mxt > (draggedComp.x + draggedComp.w - 2) && mxt < (draggedComp.x + draggedComp.w + 1) && myt > draggedComp.y && myt < (draggedComp.y + draggedComp.h)) { //default to five
-
-                    tracked = true;
-
+    if (e.target.id === "editCanvas") {
+        if (checkAndComponentsCollide(Ecanvas, e)) {
+            var slot = draggedComps[selectEditComp].parkingSlots;
+            var slotIndex = checkWhichParkingSlot(slot, e);
+            var slotName = prompt("Please enter the slot name. \n E.g A1");
+            if (slotName) {
+                var regex = new RegExp(/^([A-Z]+\d+)$/);
+                if (slotName) { // check the slotName have anything
+                    if (regex.test(slotName)) { // check whether the type match regex Currently support string infront and interger follow behind
+                        var response = confirm("Do you want to continue the number for the rest of the parking lot. \n E.g A1,A2,A3 ...");
+                        if (response) {
+                            var prefixIndex = findPrefixIndex(slotName);
+                            var prefix = slotName.substring(0, prefixIndex+1);
+                            
+                            var suffix = parseInt(slotName.substring(prefixIndex+1, slotName.length ));
+                            for (var i = slotIndex; i < slot.length; i++) {
+                                draggedComps[selectEditComp].parkingSlots[i].name = prefix +suffix;
+                                suffix++;
+                            }
+                        } else {
+                            draggedComps[selectEditComp].parkingSlots[slotIndex].name = slotName;
+                        }
+                    } else {
+                        draggedComps[selectEditComp].parkingSlots[slotIndex].name = slotName;
+                    }
                 }
             }
 
-        });
-    } catch (e) {
-        alert(e);
-    }
-
-    return tracked;
-}
-function resizeParkingSlot(dx, dy) {
-    Ecanvas.style.cursor = "ew-resize";
-    if (draggedComps[selectEditComp].w > 30) {
-        draggedComps[selectEditComp].w += dx;
-    } else {
-        draggedComps[selectEditComp].w = 31;
-    }
-}
-function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to the floor 
-    for (var i = 0; i < floors.length; i++) { // save the design for the previous floor
-        var f = floors[i];
-        if (f.floorid === previouseSelectedFloor && f.blockid === previouseSelectedBlock) {
-            f.draggedComps = draggedComps; // try
         }
     }
 }
-function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
-    floors.forEach(function (floor) { // take the save dragged comps back to the current array
-
-        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
-            draggedComps = floor.draggedComps;
-        }
-    });
+// individual small function to perform some action
+function getMousePos(canvas, evt) { // get mouse position in canvas
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
 }
+function checkAndComponentsCollide(canvas, e) { // pass the parameter and will check whether compoent collide
+    mouseOnCanvas = new getMousePos(canvas, e);
+    mx = mouseOnCanvas.x;
+    my = mouseOnCanvas.y;
+    
+    startX = mx;
+    startY = my;
+    for (var i = 0; i < draggedComps.length; i++) {
+        var c = draggedComps[i];
+        if (mx > c.x && mx < c.x + c.w && my > c.y && my < c.y + c.h) {
+
+            //add to dragged component
+            selectEditComp = i;
+            return true;
+        }
+    }
+    return false;
+}
+function findPrefixIndex(name) {
+    var prefix = 0;
+    for (var i = 0; i < name.length; i++) {
+        
+        if (name.charAt(i).match(/^([A-Z])$/)) {
+            prefix = i;
+        } else {
+            return prefix;
+        }
+    }
+    return prefix;
+}
+function isSpecificComponet(compsName) {// for component detection when dragging, can use for any component
+    if (draggedComps[selectEditComp]) {
+        if (draggedComps[selectEditComp].name === compsName) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+//change floor
 function changeFloor(e) {
     saveDraggedCompsToFloor();
     retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
@@ -428,14 +441,94 @@ function changeEditorCanvasSize() {
             var actualWidthRate = 10;
             ec.canvas.width = floor.width * actualWidthRate;
             ec.canvas.height = floor.height * actualHeightRate;
-            document.getElementById("parkingWidth").innerHTML = "Width : " + floor.width + " (m)";
-            document.getElementById("parkingHeight").innerHTML = "height : " + floor.height + " (m)";
-            
+            document.getElementById("parkingWidth").innerHTML = " Width : " + floor.width + " (m)";
+            document.getElementById("parkingHeight").innerHTML = " Height : " + floor.height + " (m)";
+
         }
     });
 }
+function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to the floor 
+    for (var i = 0; i < floors.length; i++) { // save the design for the previous floor
+        var f = floors[i];
+        if (f.floorid === previouseSelectedFloor && f.blockid === previouseSelectedBlock) {
+            f.draggedComps = draggedComps; // try
+        }
+    }
+}
+function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
+    floors.forEach(function (floor) { // take the save dragged comps back to the current array
+
+        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
+            draggedComps = floor.draggedComps;
+        }
+    });
+}
+//function when dragging components 
+function moveDraggedComps(dx, dy) {
+    var c = draggedComps[selectEditComp];
+    c.x += dx;
+    c.y += dy;
+    if (c.name === slotLabel) { // if the comps got parking slot update the position also
+        slot = c.parkingSlots;
+        if (slot) {
+            slot.forEach(function (s) { // if the parking slot move other parking specific slot move tgt
+                s.x += dx;
+                s.y += dy;
+            })
+        }
+    }
+}
+function deleteComps(mx, my) { // check if its match the designated deleted location
+    if (mx > del.x && mx < del.x + del.w && my > del.y && my < del.y + del.h) {
+        var selName = draggedComps[selectEditComp].name; // save the selected dragged component name before it deleted
+        draggedComps.splice(selectEditComp, 1);
+        alert(selName + " has been deleted.");
+    }
+}
+
+//function for maintain parking slot component
+function trackResizeSlot(e) { // track whether the mouse cursor is at the parking slot side
+    var tracked = false;
+    try {
+
+        mouseOnCanvas = new getMousePos(Ecanvas, e);
+        mxt = mouseOnCanvas.x;
+        myt = mouseOnCanvas.y;
+        draggedComps.forEach(function (draggedComp) { // check if the mouse is ar the parking slot comp
+            if (draggedComp.name === slotLabel) { // if match any start checking on the mouse cursor
+                if (mxt > (draggedComp.x + draggedComp.w - 3) && mxt < (draggedComp.x + draggedComp.w + 2) && myt > draggedComp.y && myt < (draggedComp.y + draggedComp.h)) { //default to five
+                    tracked = true;
+                }
+            }
+        });
+    } catch (e) {
+        alert(e);
+    }
+
+    return tracked;
+}
+function checkWhichParkingSlot(slot, e) { // will return the index
+    mouseOnCanvas = new getMousePos(Ecanvas, e);
+    mx = mouseOnCanvas.x;
+    my = mouseOnCanvas.y;
+    for (var i = 0; i < slot.length; i++) { // loop all the parking slot array
+        var s = slot[i];
+        if (mx > s.x && mx < s.x + s.w && my > s.y && my < s.y + s.h) { // return an integere if it find any
+            return i;
+        }
+    }
+}
+function resizeParkingSlot(dx, dy) {
+    Ecanvas.style.cursor = "ew-resize";
+    if (draggedComps[selectEditComp].w > 30) {
+        draggedComps[selectEditComp].w += dx;
+    } else {
+        draggedComps[selectEditComp].w = 31;
+    }
+}
+//function when submitting the layout
 function submitLayout() {
-    
+
     if (validateLayout()) {
         saveParkingLayout();
     }
@@ -504,43 +597,39 @@ function reloadPage() {
     location.reload();
 }
 
-// for coomponent detection when dragging, can use for any component
-function isSpecificComponet(compsName) {
-    if (draggedComps[selectEditComp].name === compsName) {
-        return true;
-    } else {
-        return false;
-    }
-}
+//for parking slot in the Parking Slot Component 
+function checkParkingSlotFit(width) { // will return integer
+    var slotFit = Math.floor(width / parkingSlotSize)
 
-function checkParkingSlotFit(width) {
-    return Math.floor(width / 25);
+    return slotFit;
 }
-
 function isAnyExistParkingSlotAffected(quantity) {
     var currentDraggedComps = draggedComps[selectEditComp];
-    if (currentDraggedComps.parkingSlots.length < quantity) {
+    if (currentDraggedComps.parkingSlots.length > quantity) {
+
         return true;
     } else {
+
         return false;
     }
 }
 function deleteParkingSlot(quantity) {
     var currentDraggedComps = draggedComps[selectEditComp];
     var parkingSlots = currentDraggedComps.parkingSlots;
-    draggedComps[selectEditComp].parkingSlots.splice(quantity, parkingSlots.length);
-    alert(draggedComps[selectEditComp].park.length);
+    draggedComps[selectEditComp].parkingSlots.splice(quantity, parkingSlots.length - quantity + 1); // index , how many
+    
 }
 function storeParkingSlots(quantity) {
     var currentDraggedComps = draggedComps[selectEditComp];
-    var currentX = currentDraggedComps.w;
+    var currentX = currentDraggedComps.x + (currentDraggedComps.parkingSlots.length * 30); // start from the last location
     var currentY = currentDraggedComps.y;
-    var w = currentDraggedComps.w;
+    var w = parkingSlotSize;
     var h = currentDraggedComps.h;
-
-    draggedComps[selectEditComp].parkingSlots.push()
-    for (var i = 0; i < quantity; i++) {
+    var addQuantity = quantity - currentDraggedComps.parkingSlots.length // calculate how much need to be added
+    for (var i = 0; i < addQuantity; i++) { // loop each the extra quantity slot needed
         var parkingSlot = {
+            name: "",
+            status: "",
             x: currentX,
             y: currentY,
             w: w,
@@ -549,5 +638,9 @@ function storeParkingSlots(quantity) {
         draggedComps[selectEditComp].parkingSlots.push(parkingSlot);
         currentX += parkingSlotSize; // 30 is the parking slot size
     }
-    alert(draggedComps[selectEditComp].park.length);
+
 }
+function adjustParkingSlotComponent() {
+    draggedComps[selectEditComp].w = draggedComps[selectEditComp].parkingSlots.length * parkingSlotSize;
+}
+
