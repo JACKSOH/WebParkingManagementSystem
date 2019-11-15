@@ -14,7 +14,7 @@
                 </div>
                 <div class="menu">
                         <nav>
-                                <ul>
+                                <ul id="menuBar">
                                         <li class="dropdown"><a>Parking Layout Maintenance</a>
                                                 <div class="dropdown-content">
                                                         <a href="createNewLayout.html">Create New Parking layout</a>
@@ -53,19 +53,21 @@
                         </div>
                         <div id="layoutContainer">
                                 <div class="statusContainer">
-                                        
+
                                         <div id="status" class="status"
-                                                style="background-color: black; display:block; height: 600px;width:150px"><br /><br />
+                                                style="background-color: black; display:block; height: 600px;width:150px">
+                                                <br /><br />
                                                 <label id="block">Block </label><br />
-                                                <select id="blockdd" onchange="changeFloor(event)" ></select><br /><br /><br />
+                                                <select id="blockdd"
+                                                        onchange="changeFloor(event)"></select><br /><br /><br />
                                                 <label id="floor">Floor </label><br />
                                                 <select id="floordd" onchange="changeFloor(event)"></select>
 
                                         </div>
                                 </div>
                                 <div class="editorContainer">
-                                        <div id="component" class="component"> <canvas id="compCanvas" width="600" height="150"
-                                                        style="background-color: darkgrey"></canvas></div>
+                                        <div id="component" class="component"> <canvas id="compCanvas" width="600"
+                                                        height="150" style="background-color: darkgrey"></canvas></div>
 
 
 

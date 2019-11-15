@@ -1,4 +1,5 @@
 initFirebase();
+var staff = false;
 
 function initFirebase() {
   // Your web app's Firebase configuration
@@ -14,12 +15,20 @@ function initFirebase() {
   };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+   
 }
 
 firebase.auth().onAuthStateChanged(function (user) {
     
     
     if (user) {
+        var menuBar = document.getElementById("menuBar");
+        var logoutButton = document.createElement("button"); // if the user detected log in  display the log out button
+        logoutButton.value = "Logout";
+        logoutButton.innerHTML = "Logout";
+        logoutButton.onclick = function () { logout() };
+        menuBar.appendChild(logoutButton);
+        staff = user;
         var welcomeMessage = document.getElementById("welcome");
         if (welcomeMessage) {
             welcomeMessage.innerHTML ="Welcome " +user.email;
@@ -70,6 +79,7 @@ function setCookie(name, value, days) {
     else var expires = "";
     document.cookie = name+"="+value+expires+"; path=/";
 }
+
 function logout() {
     firebase.auth().signOut().then(function() {
         alert("You have Signed OUT.");

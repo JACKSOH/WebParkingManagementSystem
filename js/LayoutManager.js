@@ -103,7 +103,7 @@ function validateBasicInfo() {
     floors = [];
     var company = document.getElementById("company").value;
     var user = "token"; // should be changed afterward to the readl staff id
-    parkingLot = { company: company, createdBy: user };//create parking lot object for further reference
+    parkingLot = { company: company, createdBy: staff.id };//create parking lot object for further reference
 
     var blockQuantity = document.getElementById("blockQuantity").value;
     for (var i = 0; i < blockQuantity; i++) {
