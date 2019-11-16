@@ -37,7 +37,43 @@
                 </div>
                 <div class="content">
 
-                        <div class="editor-container"></div>
+                        <div id="basicContainer">
+                                <label name="layout">Please Select an Exisiting Layout</label>
+                                <select id="layoutdd"></select>
+                                </div>
+                                <br /> <button onClick="validateParkingLot()">Next</button>
+                        </div>
+                        <div id="layoutContainer">
+                                <div class="statusContainer">
+                                        <label id="currentSelectedLayout">Current Selected Layout</label>
+                                        <div id="status" class="status"
+                                                style="background-color: black; display:block; height: 600px;width:150px">
+                                                <br /><br />
+                                                <label id="block">Block </label><br />
+                                                <select id="blockdd"
+                                                        onchange="changeFloor(event)"></select><br /><br /><br />
+                                                <label id="floor">Floor </label><br />
+                                                <select id="floordd" onchange="changeFloor(event)"></select>
+
+                                        </div>
+                                </div>
+                                <div class="editorContainer">
+                                        <div id="component" class="component"> <canvas id="compCanvas" width="600"
+                                                        height="150" style="background-color: darkgrey"></canvas></div>
+
+
+
+                                        <div id="editor" class="editor">
+                                                <canvas id="editCanvas" width="5000" height="600"
+                                                        style="background-color: whitesmoke">
+                                                </canvas>
+
+                                                <br /> <label id="parkingWidth">N/A</label>
+                                                <br /> <label id="parkingHeight">N/A</label>
+                                        </div>
+                                </div>
+                                <button onclick="updateLayout()">Update Layout</button>
+                        </div>
 
 
                 </div>

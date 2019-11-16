@@ -50,6 +50,7 @@ class slot extends component {
 }
 //initialize canvas
 function proceedToEditor(parkingLot, blocks, floors) { //function to create the layout
+    alert(staff.uid);
     isDragging = false;
     document.getElementById("basicContainer").style.display = "none";
     document.getElementById("layoutContainer").style.display = "block";
@@ -215,7 +216,7 @@ function drawEditor() {
         img.src = "/image/icons8-delete-50.png";
 
 
-        del = { x: 30, y: 30, w: 50, h: 50 };
+        del = { x: 10, y: 10, w: 50, h: 50 };
         ec.drawImage(img, del.x, del.y, del.w, del.h);
 
     }
@@ -240,7 +241,7 @@ function mouseDown(e) { //the event for mouse down
                     var parkingSlots = [];
                     newComp = { // declare a new componet 
                         x: 60,
-                        y: 80,
+                        y: 100,
                         w: c.w,
                         h: c.h,
                         name: c.name,
@@ -445,12 +446,12 @@ function changeFloor(e) {
     var selectedBlock = blockdd.options[blockdd.selectedIndex];
     floors.forEach(function (f) {
         if (floors.blockid === selectedBlock.id) {
-            alert();
+            
             //clean all selection 1st
             for (var i = 0; i < floordd.options.length; i++) {
                 floorid.remove(i);
             }
-        
+
             var opt = document.createElement("option");
             opt.id = floors.blockid;
             opt.value = floors.blockName;
@@ -638,7 +639,7 @@ function saveParkingLayout() {
     }
     var lotKey = lotRef.push({
         company: parkingLot.company,
-        createdBy: parkingLot.createdBy,
+        createdBy: staff.uid,
         status: parkingLotStatus
     }).key;
 
@@ -662,6 +663,7 @@ function saveParkingLayout() {
 
                 var compKey = compsRef.push({
                     floorid: floorKey,
+                    name:c.name,
                     w: c.w,
                     h: c.h,
                     x: c.x,

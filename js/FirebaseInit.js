@@ -28,7 +28,8 @@ firebase.auth().onAuthStateChanged(function (user) {
         logoutButton.innerHTML = "Logout";
         logoutButton.onclick = function () { logout() };
         menuBar.appendChild(logoutButton);
-        staff = user;
+        staff = user; // put the staff to user for further use
+        
         var welcomeMessage = document.getElementById("welcome");
         if (welcomeMessage) {
             welcomeMessage.innerHTML ="Welcome " +user.email;
@@ -42,7 +43,7 @@ firebase.auth().onAuthStateChanged(function (user) {
             var email_id = user.email;
         }
     }else{
-      
+        
         var isSignout = JSON.parse(getCookie("isSignout"));
       
         if (!isSignout) {   
