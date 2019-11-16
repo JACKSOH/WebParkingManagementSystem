@@ -13,6 +13,7 @@ function init() {
     //init the parking lot dropdown
     getParkingLot();
 
+
 }
 function getParkingLot() {
 
@@ -39,85 +40,95 @@ function getParkingLot() {
 
 //submit parking and proceed to next page
 function validateParkingLot() {
-    var selectedLayout = layoutdd.options[layoutdd.selectedIndex].id;
-    getAllParkingComponents(selectedLayout);
+    var selectedLotid = layoutdd.options[layoutdd.selectedIndex].id;
+    getAllParkingComponents(selectedLotid);
+    setTimeout(popMessage, 2000);
+
 }
-function getAllParkingComponents(selectedLayout) { // to get the all the componenet , block and floor in the parking layout
+
+function getAllParkingComponents(selectedLotid) { // to get the all the componenet , block and floor in the parking layout
     var blockRef = firebase.database().ref().child("Blocks");// block reference
     var floorRef = firebase.database().ref().child("Floors");// floor reference
     var compsRef = firebase.database().ref().child("Comps");// components reference
     var slotRef = firebase.database().ref().child("ParkingSlot");// components reference
-    // start retrieving
-    blockRef.on("child_added", bsnap => { //retrieve block
+    // start retrieving block
+    blockRef.orderByChild("parkingLotid").equalTo(selectedLotid).on("child_added", bsnap => { //retrieve block
         var name = bsnap.child("name").val();
         var parkingLotid = bsnap.child("parkingLotid").val();
-        var blockKey = bsnap.key;
+        var blockid = bsnap.key;
         var block = {
-            id: blockKey,
+            id: blockid,
             name: name,
             parkingLotid: parkingLotid,
-            
+
         }
         blocks.push(block);
+        // retrieve floor
         floorRef.orderByChild("blockid").equalTo(blockid).on("child_added", fsnap => { //retrieve floor
-            var blockid = blockKey;
             var floorName = fsnap.child("floorName").val();
             var floorWidth = fsnap.child("floorWidth").val();
             var floorHeight = fsnap.child("floorHeight").val();
-            var floorKey = fsnap.key;
+            var floorid = fsnap.key;
             var floor = {
-                id:floorKey,
+                id: floorid,
                 blockid: blockid,
                 floorName: floorName,
                 floorWidth: floorWidth,
                 floorHeight: floorHeight,
-                draggedComps:""
+                draggedComps: []
             }
-            
+
+            //retrieve dragged comps
             compsRef.orderByChild("floorid").equalTo(floorid).on("child_added", csnap => { //retrieve comps
-                var floorid = floorKey;
-                var compsName = fsnap.child("name").val();
-                var x = fsnap.child("x").val();
-                var y = fsnap.child("y").val();
-                var w = fsnap.child("w").val();
-                var h = fsnap.child("h").val();
-                var compKey = csnap.key;
+                var compsName = csnap.child("name").val();
+                var x = csnap.child("x").val();
+                var y = csnap.child("y").val();
+                var w = csnap.child("w").val();
+                var h = csnap.child("h").val();
+                var compid = csnap.key;
                 var comp = {
-                    id:compKey,   
+                    id: compid,
                     floorid: floorid,
                     name: compsName,
                     x: x,
                     y: y,
                     w: w,
                     h: h,
-                    parkingSlots: ""
+                    parkingSlots: []
                 }
 
-               
-                slotRef.orderByChild("ParkingSlot").equalTo(compKey).on("child_added", psnap => {
-                    var compid = compKey;
+                //retrieve slot
+                slotRef.orderByChild("compid").equalTo(compid).on("child_added", psnap => {
+
+                    var compid = compid;
                     var slotName = psnap.child("name").val();
                     var sx = psnap.child("x").val(); // s for slot
                     var sy = psnap.child("y").val();
                     var sw = psnap.child("w").val();
                     var sh = psnap.child("h").val();
-                    var slotKey = psnap.key;
+                    var slotid = psnap.key;
                     var parkingSlot = {
-                        id:slotKey,
+                        id: slotid,
                         compid: compid,
                         name: slotName,
                         x: sx,
                         y: sy,
                         w: sw,
                         h: sh,
-                       
+
                     }
                     comp.parkingSlots.push(parkingSlot); // push to the dragged comp array
+                    
                 });
+                
+                //push the draged comp to the floor array
+                floor.draggedComps.push(comp);
+
+
             });
-            
-            floor.draggedComps = comp; //push the draged comp to the floor array
-            floors.push(floor);
+            floors.push(floor); // push to the floor after the comp and slot retreived
         });
+        
     });
+
 }
