@@ -17,8 +17,8 @@ var startX, startY;
 var mouseOnCanvas; // declare mouse on which cavas
 var mx, my;//declare mouse location X and Y
 var EcanvasWidth, EcanvasHeight, CcanvasWidth, CcanvasHeight; //pass the ecanvas and ccanvas w,h within this class
-var slotLabel = "SlotVertical"; // label for Vertical
-var slotLabelHor = "SlotHorinzontal" //label for horinzontal
+const slotLabel = "SlotVertical"; // label for Vertical
+const slotLabelHor = "SlotHorinzontal" //label for horinzontal
 var parkingSlotSize = 30;// parking slot size
 var compStartX, compStartY; //declare componenet original location
 
@@ -94,8 +94,6 @@ function initStatus() {
     var blockdd = document.getElementById("blockdd");
     var floordd = document.getElementById("floordd");
     blocks.forEach(function (block) {
-
-
         var opt = document.createElement("option");
         opt.id = block.blockid;
         opt.value = block.blockName;
@@ -122,6 +120,7 @@ function initStatus() {
     floordd.selectedIndex = "0";
     changeEditorCanvasSize();
     previouseSelectedFloor = floordd.options[0].id;
+    
 }
 
 // draw the canvas for each item has
@@ -496,6 +495,7 @@ function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to t
     }
 }
 function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
+    alert("1");
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
 
         if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
