@@ -724,7 +724,6 @@ function checkWhichParkingSlot(slot, e) { // will return the index
         }
     }
 }
-
 function resizeParkingSlot(dx, dy) {
     Ecanvas.style.cursor = "ew-resize";
     if (draggedComps[selectEditComp].w > 30) {
@@ -842,7 +841,6 @@ function storeParkingSlots(quantity) {
 function adjustParkingSlotComponent() {
     draggedComps[selectEditComp].w = draggedComps[selectEditComp].parkingSlots.length * parkingSlotSize;
 }
-
 //when the button update layout is press
 function updateLayout() {
     try {

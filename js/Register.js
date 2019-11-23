@@ -16,6 +16,7 @@ function registerStaff() {
                 role: role
             })
             alert("user created");
+            setTimeout(reloadPage, 1000);
         }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -23,9 +24,8 @@ function registerStaff() {
             alert(errorCode);
             alert(errorMessage);
         });
-    } else {
-        alert("wrong");
     }
+   
 }
 function validateStaffInfo(email, name, password, confirmPassword, phone) {
     var check = false;
@@ -43,4 +43,7 @@ function validateStaffInfo(email, name, password, confirmPassword, phone) {
     }
 
     return check;
+}
+function reloadPage() {
+    location.reload();
 }

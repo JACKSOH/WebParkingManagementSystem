@@ -52,7 +52,7 @@ function getAllUser() {
 function changeRole(changedRole, uid) {
     var userRef = firebase.database().ref("users/" + uid);
     userRef.update({
-        'role': changedRole
+        role: changedRole
     });
     alert("update successfully");
 
