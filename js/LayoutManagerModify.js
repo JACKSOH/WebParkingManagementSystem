@@ -379,7 +379,7 @@ function drawEditor() {
         img.src = "/image/icons8-delete-50.png";
 
 
-        del = { x: 10, y: 10, w: 50, h: 50 };
+        del = { x: 10, y: 10, w: 30, h: 30 };
         ec.drawImage(img, del.x, del.y, del.w, del.h);
 
     }
@@ -849,42 +849,125 @@ function updateLayout() {
         CheckAndDeleteCompsInFirebase();
         CheckAndUpdateCompsInFirebase();
         alert("Update Successfully!!");
-   
+        setTimeout(reloadPage, 2000);
     } catch (e) {
         alert(e);
     }
 }
 function CheckAndDeleteCompsInFirebase() {
     var compsRef = firebase.database().ref().child("Comps");// comps reference
-    var slotsRef = firebase.database().ref().child("ParkingSlot");// comps reference
+    var slotsRef = firebase.database().ref().child("ParkingSlot");// slots reference
     floors.forEach(function (f) { // read all floor
         compsRef.orderByChild("floorid").equalTo(f.floorid).on("child_added", csnap => { // read all comps match the floor
             var isExist = false;
             var isSlot = false;
             var compid = csnap.key;
-            f.draggedComps.forEach(function (dc) { //compare to all the dragged comp whether any of it match
+            f.draggedComps.forEach(function (dc) { //compare to all the dragged comp whether any of it matched
                 if (compid === dc.id) {
                     isExist = true;
-               
+
                 }
                 if (dc.name === slotLabel || dc.name === slotLabelHor) {
                     isSlot = true;
+                    if (isExist) { // if the parking slot exist
+                        
+                        slotsRef.orderByChild("compid").equalTo(dc.id).on("child_added", pssnap => {
+                         
+                            var ispsExist = false;
+                            var psid = pssnap.key;
+                            dc.parkingSlots.forEach(function (ps) {
+                                
+                                if (psid === ps.id) { // it is match will not delete
+                                    ispsExist = true;
+                                }
+                            });
+                            // if the parking slot not exist then try to remove
+                            if (ispsExist === false) {
+                                slotsRef.child(psid).remove();
+                            }
+                        });
+
+                    }
+
                 }
             });
             if (isExist === false) { // delete if the comps does not match any of each id in the parking slot
                 compsRef.child(compid).remove();// comps reference
                 if (isSlot) { // if the deleted comps is a parking slot component delete all the parking slot also
-                    alert("is parking slot");
+          
                     slotsRef.orderByChild("compid").equalTo(compid).on("child_added", ssnap => {
                         slotsRef.child(ssnap.key).remove(); //remove the parking 
                     });
                 }
-                alert("one item deleted");
+                
             }
         });
     });
 }
 
-function CheckAndUpdateCompsInFirebase() {
-            alert("update");
-        }
+function CheckAndUpdateCompsInFirebase() { // update the comps to the database
+    var compsRef = firebase.database().ref().child("Comps");// comps reference
+    var slotsRef = firebase.database().ref().child("ParkingSlot");// slots reference
+    floors.forEach(function (f) { //read all floor
+        f.draggedComps.forEach(function (dc) { // read all dragged comps
+            if (dc.id) { // if match update
+                compsRef.child(dc.id).update({
+                    w: dc.w,
+                    h: dc.h,
+                    x: dc.x,
+                    y: dc.y
+                });
+                //for parking slot
+                if (dc.name === slotLabel || dc.name === slotLabelHor) {
+                    var ps = dc.parkingSlots;
+                    if (ps) { // Make sure the parking slot inside
+                        ps.forEach(function (s) {
+                            if (s.id) { // to check whether the existing parking slot is inside
+                                slotsRef.child(s.id).update({
+                                    w: s.w,
+                                    h: s.h,
+                                    x: s.x,
+                                    y: s.y,
+                                    name: s.name
+                                });
+                            } else { // if no id inside
+                                var slotKey = slotsRef.push({
+                                    compid: dc.id,
+                                    name: s.name,
+                                    x: s.x,
+                                    y: s.y,
+                                    w: s.w,
+                                    h: s.h
+                                }).key;
+                            }
+                        });
+
+                    }
+                }
+
+            } else { // if not push to the database
+                var compKey = compsRef.push({
+                    floorid: f.floorid,
+                    name: dc.name,
+                    w: dc.w,
+                    h: dc.h,
+                    x: dc.x,
+                    y: dc.y,
+                }).key;
+                var ps = dc.parkingSlots; //for parking slot
+                if (ps) {
+                    ps.forEach(function (s) {
+                        var slotKey = slotsRef.push({
+                            compid: compKey,
+                            name: s.name,
+                            x: s.x,
+                            y: s.y,
+                            w: s.w,
+                            h: s.h
+                        }).key;
+                    });
+                }
+            }
+        })
+    });
+}

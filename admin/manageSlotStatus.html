@@ -4,40 +4,79 @@
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>Manage Parking Slot</title>
 </head>
-<body>
-    
-<div class="header" id="myHeader">
-    <div class="logo">
-        
-    <p>Parking Company</p></div>
-    <div class="menu">
-        <nav>
-                <ul id ="menuBar">
-                        <li class="dropdown"><a>Parking Layout Maintenance</a>
-                            <div class="dropdown-content">
-                                    <a href="createNewLayout.html">Create New Parking layout</a>
-                                    <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                    <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                            </div>
-                            <li class="dropdown"><a>Manage User</a>
-                                <div class="dropdown-content">
-                                        <a href="registerNewStaff.html">Register New Staff</a>
-                                        <a href="manageUser.html">Manage Staff Role</a>
-                                </div>
-                        </li>
-                    </ul>
-        </nav></div>
-</div>
-<div class="container">
-<div class="sub-title">
-    <p>Parking Slot Status</p>
-</div>
-<div class="content">
-      
-           <div class="editor-container" ></div>
-           
-       
-</div>
-</div>
 
+<body>
+
+        <div class="header" id="myHeader">
+                <div class="logo">
+
+                        <p>Parking Company</p>
+                </div>
+                <div class="menu">
+                        <nav>
+                                <ul id="menuBar">
+                                        <li class="dropdown"><a>Parking Layout Maintenance</a>
+                                                <div class="dropdown-content">
+                                                        <a href="createNewLayout.html">Create New Parking layout</a>
+                                                        <a href="modifyExistingLayout.html">Manage Parking layout</a>
+                                                        <a href="manageSlotStatus.html">Manage Parking slot status</a>
+                                                </div>
+                                        <li class="dropdown"><a>Manage User</a>
+                                                <div class="dropdown-content">
+                                                        <a href="registerNewStaff.html">Register New Staff</a>
+                                                        <a href="manageUser.html">Manage Staff Role</a>
+                                                </div>
+                                        </li>
+                                </ul>
+                        </nav>
+                </div>
+        </div>
+        <div class="container">
+                <div class="sub-title">
+                        <p>Parking Slot Status</p>
+                </div>
+                <div class="content">
+
+                        <div id="basicContainer">
+                                <label name="layout">Please Select an Exisiting Layout</label>
+                                <select id="layoutdd"></select>
+                                <br /> <button onClick="validateParkingLot()">Next</button>
+                        </div>
+                        <div id="layoutContainer">
+                                <div class="statusContainer">
+                                        <label id="currentSelectedLayout">Current Selected Layout</label>
+                                        <div id="status" class="status"
+                                                style="background-color: black; display:block; height: 600px;width:150px">
+                                                <br /><br />
+                                                <label id="block">Block </label><br />
+                                                <select id="blockdd"
+                                                        onchange="changeFloor(event)"></select><br /><br /><br />
+                                                <label id="floor">Floor </label><br />
+                                                <select id="floordd" onchange="changeFloor(event)"></select>
+
+                                        </div>
+                                </div>
+                                <div class="editorContainer">
+                                        <div id="component" class="component"> <canvas id="compCanvas" width="600"
+                                                        height="150" style="background-color: darkgrey"></canvas></div>
+
+
+
+                                        <div id="editor" class="editor">
+                                                <canvas id="editCanvas" width="5000" height="600"
+                                                        style="background-color: whitesmoke">
+                                                </canvas>
+
+                                                <br /> <label id="parkingWidth">N/A</label>
+                                                <br /> <label id="parkingHeight">N/A</label>
+                                        </div>
+                                </div>
+
+                                <button onclick="updateLayout()">Update Layout</button>
+                        </div>
+                </div>
+        </div>
+        <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase.js"></script>
+        <script src="/js/FirebaseInit.js"></script>
 </body>
