@@ -120,7 +120,7 @@ function initStatus() {
     floordd.selectedIndex = "0";
     changeEditorCanvasSize();
     previouseSelectedFloor = floordd.options[0].id;
-    
+
 }
 
 // draw the canvas for each item has
@@ -443,24 +443,28 @@ function isSpecificComponet(compsName) {// for component detection when dragging
 // function for change floor
 function changeFloor(e) {
     var selectedBlock = blockdd.options[blockdd.selectedIndex];
+    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
+        floordd.remove(i);
+    }
     floors.forEach(function (f) {
-        if (floors.blockid === selectedBlock.id) {
-            
+        
+        if (f.blockid === selectedBlock.id) {
+           
+        
             //clean all selection 1st
-            for (var i = 0; i < floordd.options.length; i++) {
-                floorid.remove(i);
-            }
-
-            var opt = document.createElement("option");
-            opt.id = floors.blockid;
-            opt.value = floors.blockName;
-            opt.innerHTML = floors.blockName;
+            var opt = document.createElement("option"); // add dropdown item
+            opt.id = f.floorid;
+            opt.value = f.floorName;
+            opt.innerHTML = f.floorName;
+            floordd.add(opt);
         }
     });
     saveDraggedCompsToFloor();
     retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
+    
     previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
     previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
+    
     changeEditorCanvasSize();
 
 
@@ -495,9 +499,7 @@ function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to t
     }
 }
 function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
-    alert("1");
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
-
         if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
             draggedComps = floor.draggedComps;
         }
@@ -650,35 +652,40 @@ function saveParkingLayout() {
             blockName: b.blockName
         }).key;
         floors.forEach(function (f) { //f stand for floor
-
+            var floorKey = "";
             if (f.blockid === b.blockid) {
-                var floorKey = floorRef.push({
+                floorKey = floorRef.push({
                     blockid: blockKey,
                     floorName: f.floorid,
                     floorWidth: f.width,
                     floorHeight: f.height,
                 }).key;
             }
+
             f.draggedComps.forEach(function (c) { // c stand for components
 
                 var compKey = compsRef.push({
                     floorid: floorKey,
-                    name:c.name,
+                    name: c.name,
                     w: c.w,
                     h: c.h,
                     x: c.x,
                     y: c.y,
                 }).key;
+
                 var ps = c.parkingSlots; // to save parking slot
                 if (ps) {
+
                     ps.forEach(function (s) {
+
                         var slotKey = slotRef.push({
                             compid: compKey,
                             name: s.name,
                             x: s.x,
                             y: s.y,
                             w: s.w,
-                            h: s.h
+                            h: s.h,
+                            status: ""
                         }).key;
                     });
                 }

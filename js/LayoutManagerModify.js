@@ -612,24 +612,28 @@ function reloadPage() {
 // function for change floor
 function changeFloor(e) {
     var selectedBlock = blockdd.options[blockdd.selectedIndex];
+    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
+        floordd.remove(i);
+    }
     floors.forEach(function (f) {
-        if (floors.blockid === selectedBlock.id) {
-
+        
+        if (f.blockid === selectedBlock.id) {
+           
+        
             //clean all selection 1st
-            for (var i = 0; i < floordd.options.length; i++) {
-                floorid.remove(i);
-            }
-
-            var opt = document.createElement("option");
-            opt.id = floors.blockid;
-            opt.value = floors.blockName;
-            opt.innerHTML = floors.blockName;
+            var opt = document.createElement("option"); // add dropdown item
+            opt.id = f.floorid;
+            opt.value = f.floorName;
+            opt.innerHTML = f.floorName;
+            floordd.add(opt);
         }
     });
     saveDraggedCompsToFloor();
     retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
+    
     previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
     previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
+    
     changeEditorCanvasSize();
 
 
@@ -654,19 +658,18 @@ function changeEditorCanvasSize() {
     });
 }
 function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to the floor 
+    
     for (var i = 0; i < floors.length; i++) { // save the design for the previous floor
         var f = floors[i];
         if (f.floorid === previouseSelectedFloor && f.blockid === previouseSelectedBlock) {
             f.draggedComps = draggedComps; // try
+            
         }
     }
 }
 function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
-
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
-
-        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
-
+        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) { 
             draggedComps = floor.draggedComps;
         }
     });
