@@ -1,3 +1,4 @@
+
 function registerStaff() {
     var email = document.getElementById("email").value;
     var name = document.getElementById("name").value;
@@ -27,6 +28,7 @@ function registerStaff() {
     }
    
 }
+
 function validateStaffInfo(email, name, password, confirmPassword, phone) {
     var check = false;
     if (email !== "" && name !== "" && password !== "" && confirmPassword !== "" && phone !== "") {

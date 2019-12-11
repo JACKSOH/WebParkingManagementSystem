@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 
 <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+                $(function () {
+                        $("#myHeader").load("header.html");
+                });
+                $(function () {
+                        $("#myFooter").load("footer.html");
+                });
+        </script>
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>Manage Parking Slot</title>
         <script src="jquery-3.4.1.min.js"></script>
@@ -9,28 +18,7 @@
 <body>
 
         <div class="header" id="myHeader">
-                <div class="logo">
 
-                        <p>Parking Company</p>
-                </div>
-                <div class="menu">
-                        <nav>
-                                <ul id="menuBar">
-                                        <li class="dropdown"><a>Parking Layout Maintenance</a>
-                                                <div class="dropdown-content">
-                                                        <a href="createNewLayout.html">Create New Parking layout</a>
-                                                        <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                                        <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                                                </div>
-                                        <li class="dropdown"><a>Manage User</a>
-                                                <div class="dropdown-content">
-                                                        <a href="registerNewStaff.html">Register New Staff</a>
-                                                        <a href="manageUser.html">Manage Staff Role</a>
-                                                </div>
-                                        </li>
-                                </ul>
-                        </nav>
-                </div>
         </div>
         <div class="container">
                 <div class="sub-title">
@@ -55,27 +43,44 @@
                                                 <label id="floor">Floor </label><br />
                                                 <select id="floordd" onchange="changeFloor(event)"></select>
 
+                                                <div class="tips-container">
+                                                                <div class="tips"><h3>Guide :</h3></div>
+                                                        <div class="tips">1. Select the parking slot you wish to update.<br/><br/></div>
+                                                        <div class="tips">2. Double click the parking slot to change the slot status to available or unavailable.</div>
+                                                </div>
+
                                         </div>
                                 </div>
                                 <div class="editorContainer">
-                            
+                                        <div class="component">
+                                                <h2>Slot Status Indicator</h2>
+                                                <div class="color-container">
+                                                        <div class="color" style="background-color: red;"></div>Unavailable
+                                                        <div class="color" style="background-color: yellow;"></div>Improper
+                                                        <div class="color" style="background-color: green;"> </div>Available
+                                                        <div class="color" style="background-color: grey;"></div>Parked
 
 
+                                                </div>
 
+
+                                        </div>
                                         <div id="editor" class="editor">
                                                 <canvas id="editCanvas" width="5000" height="600"
                                                         style="background-color: whitesmoke">
                                                 </canvas>
-
                                                 <br /> <label id="parkingWidth">N/A</label>
                                                 <br /> <label id="parkingHeight">N/A</label>
                                         </div>
                                 </div>
 
-                               
+
                         </div>
                 </div>
         </div>
+        <footer class="footer" id="myFooter">
+
+        </footer>
         <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase.js"></script>
         <script src="/js/FirebaseInit.js"></script>

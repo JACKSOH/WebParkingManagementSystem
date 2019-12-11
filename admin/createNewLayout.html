@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 
 <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+                $(function () {
+                        $("#myHeader").load("header.html");
+                });
+                $(function () {
+                        $("#myFooter").load("footer.html");
+                });
+        </script>
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>New Parking Layout</title>
 </head>
@@ -8,28 +17,7 @@
 <body>
 
         <div class="header" id="myHeader">
-                <div class="logo">
 
-                        <p>Parking Company</p>
-                </div>
-                <div class="menu">
-                        <nav>
-                                <ul id="menuBar">
-                                        <li class="dropdown"><a>Parking Layout Maintenance</a>
-                                                <div class="dropdown-content">
-                                                        <a href="createNewLayout.html">Create New Parking layout</a>
-                                                        <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                                        <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                                                </div>
-                                        <li class="dropdown"><a>Manage User</a>
-                                                <div class="dropdown-content">
-                                                        <a href="registerNewStaff.html">Register New Staff</a>
-                                                        <a href="manageUser.html">Manage Staff Role</a>
-                                                </div>
-                                        </li>
-                                </ul>
-                        </nav>
-                </div>
         </div>
         <div class="container">
                 <div class="sub-title">
@@ -82,6 +70,9 @@
 
         </div>
         </div>
+        <footer class="footer" id="myFooter">
+
+        </footer>
         <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase.js"></script>
         <script src="/js/FirebaseInit.js"></script>

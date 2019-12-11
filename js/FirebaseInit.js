@@ -2,26 +2,28 @@ initFirebase();
 var staff = false;
 
 function initFirebase() {
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyAocUMZb2k47JE6HYO2jqsa1GZ8djHUB5k",
-    authDomain: "parking-management-syste-d2bff.firebaseapp.com",
-    databaseURL: "https://parking-management-syste-d2bff.firebaseio.com",
-    projectId: "parking-management-syste-d2bff",
-    storageBucket: "parking-management-syste-d2bff.appspot.com",
-    messagingSenderId: "211093333348",
-    appId: "1:211093333348:web:8f83cabb5ecc0086550671",
-    measurementId: "G-YYG5G946DB"
-  };
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyAocUMZb2k47JE6HYO2jqsa1GZ8djHUB5k",
+        authDomain: "parking-management-syste-d2bff.firebaseapp.com",
+        databaseURL: "https://parking-management-syste-d2bff.firebaseio.com",
+        projectId: "parking-management-syste-d2bff",
+        storageBucket: "parking-management-syste-d2bff.appspot.com",
+        messagingSenderId: "211093333348",
+        appId: "1:211093333348:web:8f83cabb5ecc0086550671",
+        measurementId: "G-YYG5G946DB"
+    };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-   
+
+
+
 }
 
+
 firebase.auth().onAuthStateChanged(function (user) {
-    
-    
     if (user) {
+
         var menuBar = document.getElementById("menuBar");
         var logoutButton = document.createElement("button"); // if the user detected log in  display the log out button
         logoutButton.value = "Logout";
@@ -29,31 +31,33 @@ firebase.auth().onAuthStateChanged(function (user) {
         logoutButton.onclick = function () { logout() };
         menuBar.appendChild(logoutButton);
         staff = user; // put the staff to user for further use
-        
         var welcomeMessage = document.getElementById("welcome");
         if (welcomeMessage) {
-            welcomeMessage.innerHTML ="Welcome " +user.email;
+            welcomeMessage.innerHTML = "Welcome " + user.email;
         }
-     
-        
         setCookie("isSignout", false);
         // User is signed in.
         var user = firebase.auth().currentUser;
         if (user != null) {
             var email_id = user.email;
         }
-    }else{
-        
+    } else {
+ 
         var isSignout = JSON.parse(getCookie("isSignout"));
-      
-        if (!isSignout) {   
+        
+        if (!isSignout) {
             alert("You are not logged in.");
-             setCookie("isSignout",true);
-             
-           window.location = "/public/stafflogin.html";
+            setCookie("isSignout", true);
+            window.location = "/public/stafflogin.html";
+        } else if (isSignout) {
+            var currentLocation = window.location.href;
+            var yesno = currentLocation.includes("stafflogin");
+            if (!yesno) {
+                alert("You are not logged in.");
+                window.location = "/public/stafflogin.html";
+            }
         }
         // No user is signed in.
-
     }
 });
 function getCookie(cname) {
@@ -74,17 +78,18 @@ function setCookie(name, value, days) {
 
     if (days) {
         var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toGMTString();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        var expires = "; expires=" + date.toGMTString();
     }
     else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name + "=" + value + expires + "; path=/";
 }
 
 function logout() {
-    firebase.auth().signOut().then(function() {
+    firebase.auth().signOut().then(function () {
         alert("You have Signed OUT.");
-      }).catch(function(error) {
-          alert(error);
-      });
+
+    }).catch(function (error) {
+        alert(error);
+    });
 }

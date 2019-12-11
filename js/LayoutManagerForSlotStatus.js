@@ -215,8 +215,9 @@ function initStatus() { // to initialize the data need to be used
     previouseSelectedBlock = blockdd.options[0].id;
     floordd.selectedIndex = "0";
 
-    changeEditorCanvasSize();
+    
     previouseSelectedFloor = floordd.options[0].id;
+    changeEditorCanvasSize(previouseSelectedBlock,previouseSelectedFloor);
 }
 
 function rectForEC(x, y, w, h, name) { //for Editor Canvas
@@ -252,6 +253,10 @@ function rectForECslot(x, y, w, h, name, status) { //draw for parking slot
         ec.fillStyle = "green";
     } else if (status === "unavailable") {
         ec.fillStyle = "red";
+    } else if(status === "parked"){
+        ec.fillStyle = "grey";
+    } else if (status === "improper") {
+        ec.fillStyle = "yellow"
     } else {
         ec.fillStyle = "grey";
     }
@@ -288,8 +293,8 @@ function mouseDbClick(e) {
         var slotRef = firebase.database().ref().child("ParkingSlot");// components reference
         var slotIndex = checkWhichParkingSlot(draggedComps[compsIndex].parkingSlots, e);
         var slot = draggedComps[compsIndex].parkingSlots[slotIndex];
-        if (slot.status === "available") {
-            var desc = prompt("The parking slot is going to change to unavailable.\n Description: ");
+        if (slot.status === "available" ||slot.status === "improper") {
+            var desc = prompt("What is the reason to change this slot to UNAVAILABLE? \n Description: ");
             if (desc) {
                 draggedComps[compsIndex].parkingSlots[slotIndex].status = "unavailable";
                 slotRef.child(slot.id).update({
@@ -314,36 +319,38 @@ function mouseDbClick(e) {
 // function for change floor
 function changeFloor(e) {
     var selectedBlock = blockdd.options[blockdd.selectedIndex];
-    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
-        floordd.remove(i);
-    }
+    var selectedFloor = floordd.options[floordd.selectedIndex];
+    
+    
+    floordd.options.length = 0;
+    
     floors.forEach(function (f) {
-        
         if (f.blockid === selectedBlock.id) {
-           
-        
-            //clean all selection 1st
             var opt = document.createElement("option"); // add dropdown item
             opt.id = f.floorid;
             opt.value = f.floorName;
             opt.innerHTML = f.floorName;
             floordd.add(opt);
+            
         }
     });
+    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
+        if (floordd.options[i].id === selectedFloor.id) {
+            floordd.selectedIndex = i;
+        }
+    }
+    
     saveDraggedCompsToFloor();
-    retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
-    
-    previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
-    previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
-    
-    changeEditorCanvasSize();
-
-
+    retrieveSelectedFloorDraggedComps(selectedBlock.id,selectedFloor.id); // update the canvas design with the new slected floor
+    changeEditorCanvasSize(selectedBlock.id,selectedFloor.id);
+    previouseSelectedBlock = selectedBlock.id;// update the previous value
+    previouseSelectedFloor = selectedFloor.id;
+   
 }
-function changeEditorCanvasSize() {
+function changeEditorCanvasSize(sBlock,sFloor) {
 
-    var selectedBlock = blockdd.options[blockdd.selectedIndex].id;
-    var selectedFloor = floordd.options[floordd.selectedIndex].id;
+    var selectedBlock = sBlock;
+    var selectedFloor = sFloor;
 
     floors.forEach(function (floor) {
 
@@ -367,12 +374,11 @@ function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to t
         }
     }
 }
-function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
+function retrieveSelectedFloorDraggedComps(selectedBlock,selectedFloor) { //to retrieve the dragged comps from the selected floor.
 
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
 
-        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
-
+        if (floor.blockid === selectedBlock && floor.floorid === selectedFloor) {
             draggedComps = floor.draggedComps;
         }
     });
