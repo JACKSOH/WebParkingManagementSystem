@@ -3,9 +3,7 @@
 <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
-                $(function () {
-                        $("#myHeader").load("blankHeader.html");
-                });
+
                 $(function () {
                         $("#myFooter").load("/admin/footer.html");
                 });
@@ -17,19 +15,31 @@
 
 <body>
         <div class="header" id="myHeader">
+                <div class="logo">
+                        <img src="/image/IPMS logo white.png" />
 
+                </div>
+                <div class="menu">
+                       
+                        <nav>
+                                <ul id="menuBar">
+                                        <li class="dropdown"><a href="stafflogin.html" style="color: white;">Staff Login</a>
+                                        </li>
+                                </ul>
+                        </nav>
+                </div>
         </div>
         <div class="container" style="margin:0 auto">
-                <div class="sub-title">
-                        <p>Index</p>
-                </div>
-                <div class="index ">
-                       
+             
+                <div class="content-introduction">
+                        <div class="introduction">
+                                <h1>We put parking experience optimization at the core of our company mission.<br/> We help you manage your company parking lot in one place.</h1>
+                                <h2>We are,</h2>
+                                <img src ="/image/IPMS logo white.png" style="width: 300px; height:300px"/>
+                        </div>
                 </div>
         </div>
         <footer class="footer" id="myFooter">
         </footer>
-        <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
-        <script src="/js/FirebaseInit.js"></script>
-        <script src="/js/LoginScript.js"></script>
+
 </body>
