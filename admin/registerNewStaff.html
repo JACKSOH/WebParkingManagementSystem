@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 
 <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+                $(function () {
+                        $("#myHeader").load("header.html");
+                });
+                $(function () {
+                        $("#myFooter").load("footer.html");
+                });
+        </script>
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>Register new staff</title>
 </head>
 
 <body>
-
         <div class="header" id="myHeader">
-                <div class="logo">
-
-                        <p>Parking Company</p>
-                </div>
-                <div class="menu">
-                        <nav>
-                                <ul>
-                                        <li class="dropdown"><a>Parking Layout Maintenance</a>
-                                                <div class="dropdown-content">
-                                                        <a href="createNewLayout.html">Create New Parking layout</a>
-                                                        <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                                        <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                                                </div>
-                                        <li class="dropdown"><a>Manage User</a>
-                                                <div class="dropdown-content">
-                                                        <a href="registerNewStaff.html">Register New Staff</a>
-                                                        <a href="manageUser.html">Manage Staff Role</a>
-                                                </div>
-                                        </li>
-                                        <button onclick="logout()">Logout</button>
-                                </ul>
-                        </nav>
-                </div>
         </div>
+
         <div class="container">
                 <div class="sub-title">
                         <p>Register New Staff</p>
                 </div>
+
                 <div class="content">
                         <label name="email">Email</label> <input type="text" id="email" required="required" /><br />
                         <label name="name">Name</label><input type="text" id="name" required="required" /><br />
@@ -51,8 +38,12 @@
                         <button onclick="registerStaff()">Submit</button>
                 </div>
         </div>
+        <footer class="footer" id="myFooter">
+
+        </footer>
         <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
         <script src="/js/FirebaseInit.js"></script>
+
         <script src="/js/Register.js"></script>
 </body>
 </body>

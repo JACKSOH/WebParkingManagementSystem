@@ -1,43 +1,82 @@
 <!DOCTYPE html>
 
 <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+                $(function () {
+                        $("#myHeader").load("header.html");
+                });
+                $(function(){
+                $("#myFooter").load("footer.html");
+        });
+        </script>
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>Modify Layout</title>
 </head>
-<body>
-    
-<div class="header" id="myHeader">
-    <div class="logo">
-        
-    <p>Parking Company</p></div>
-    <div class="menu">
-        <nav>
-                <ul>
-                        <li class="dropdown"><a>Parking Layout Maintenance</a>
-                            <div class="dropdown-content">
-                                    <a href="createNewLayout.html">Create New Parking layout</a>
-                                    <a href="modifyExistingLayout.html">Manage Parking layout</a>
-                                    <a href="manageSlotStatus.html">Manage Parking slot status</a>
-                            </div>
-                            <li class="dropdown"><a>Manage User</a>
-                                <div class="dropdown-content">
-                                        <a href="registerNewStaff.html">Register New Staff</a>
-                                        <a href="manageUser.html">Manage Staff Role</a>
-                                </div>
-                        </li>
-                    </ul>
-        </nav></div>
-</div>
-<div class="container">
-<div class="sub-title">
-    <p>Modify Layout</p>
-</div>
-<div class="content">
-      
-           <div class="editor-container" ></div>
-           
-       
-</div>
-</div>
 
+<body>
+
+        <div class="header" id="myHeader">
+
+        </div>
+        <div class="container">
+                <div class="sub-title">
+                        <p>Modify Layout</p>
+                </div>
+                <div class="content">
+
+                        <div id="basicContainer">
+                                <label name="layout">Please Select an Exisiting Layout</label>
+                                <select id="layoutdd"></select>
+                                <br /> <button onClick="validateParkingLot()">Next</button>
+                        </div>
+                        <div id="layoutContainer">
+                                <div class="statusContainer">
+                                        <label id="currentSelectedLayout">Current Selected Layout</label>
+                                        <div id="status" class="status"
+                                                style="background-color: black; display:block; height: 600px;width:150px">
+                                                <br /><br />
+                                                <label id="block">Block </label><br />
+                                                <select id="blockdd"
+                                                        onchange="changeFloor(event)"></select><br /><br /><br />
+                                                <label id="floor">Floor </label><br />
+                                                <select id="floordd" onchange="changeFloor(event)"></select>
+                                                <div class="tips-container">
+                                                                <div class="tips"><h3>Guide :</h3></div>
+                                                        <div class="tips">1. Click the component from component container and select the floor or block from dropdown list.<br/><br/></div>
+                                                        <div class="tips">2. Drag and drop the component at the proper location.<br/><br/></div>
+                                                        <div class="tips">3. You can resize for the "slotHorizontal" and "slotVertical".<br/><br/></div>
+                                                        <div class="tips">4. Double click on the component "slotHorizontal" or "slotVertical" to enter parking slot name manually.<br/><br/></div>
+                                                        <div class="tips">5. Click "Submit New Layout" at the left bottom corner when you have finished modifying.</div>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="editorContainer">
+                                        <div id="component" class="component"> <canvas id="compCanvas" width="600"
+                                                        height="150" style="background-color: darkgrey"></canvas></div>
+
+
+
+                                        <div id="editor" class="editor">
+                                                <canvas id="editCanvas" width="5000" height="600"
+                                                        style="background-color: whitesmoke">
+                                                </canvas>
+
+                                                <br /> <label id="parkingWidth">N/A</label>
+                                                <br /> <label id="parkingHeight">N/A</label>
+                                        </div>
+                                </div>
+
+                                <button onclick="updateLayout()">Update Layout</button>
+                        </div>
+                </div>
+
+        </div>
+        <footer class="footer" id="myFooter">
+               
+                </footer>
+        <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase.js"></script>
+        <script src="/js/FirebaseInit.js"></script>
+        <script src="/js/LayoutManagerModify.js"></script>
 </body>

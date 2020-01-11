@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 
 <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+                $(function () {
+                        $("#myHeader").load("blankHeader.html");
+                });
+                $(function () {
+                        $("#myFooter").load("/admin/footer.html");
+                });
+        </script>
         <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="/css/logincss1.css">
         <title>Staff Login</title>
 </head>
+
 <body>
-        
-        <div class="container">
+        <div class="header" id="myHeader">
+
+        </div>
+        <div class="container" style="margin:0 auto">
                 <div class="sub-title">
-                    <p>LOGIN</p>
+                        <p>STAFF LOGIN</p>
                 </div>
                 <div class="content">
-                            <label>EMAIL</label>
-                            <input type="text" id="email" name="email" placeholder="Please enter your EMAIL.">
-                            
-                                <label>Password</label>
-                                <input type="password"  id="password"name="password" placeholder="Please enter your PASSWORD.">
-                                <button onClick="login()">Submit</button>
+                        <label>EMAIL</label>
+                        <input type="text" id="email" name="email" placeholder="Please enter your EMAIL.">
+
+                        <label>Password</label>
+                        <input type="password" id="password" name="password" placeholder="Please enter your PASSWORD.">
+                        <button onClick="login()">Submit</button>
                 </div>
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
-    <script src="/js/FirebaseInit.js"></script>
-  <script src="/js/LoginScript.js"></script>
+        </div>
+        <footer class="footer" id="myFooter">
+        </footer>
+        <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase.js"></script>
+        <script src="/js/FirebaseInit.js"></script>
+        <script src="/js/LoginScript.js"></script>
 </body>
