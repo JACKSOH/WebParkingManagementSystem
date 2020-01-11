@@ -104,6 +104,7 @@ function getAllParkingComponents(selectedLotid) { // to get the all the componen
     var slotRef = firebase.database().ref().child("ParkingSlot");// components reference
     // start retrieving block
     blockRef.orderByChild("parkingLotid").equalTo(selectedLotid).on("child_added", bsnap => { //retrieve block
+        
         var blockName = bsnap.child("blockName").val();
         var parkingLotid = bsnap.child("parkingLotid").val();
         var blockid = bsnap.key;
@@ -114,6 +115,7 @@ function getAllParkingComponents(selectedLotid) { // to get the all the componen
 
         }
         blocks.push(block);
+        
         // retrieve floor
         floorRef.orderByChild("blockid").equalTo(blockid).on("child_added", fsnap => { //retrieve floor
             var floorName = fsnap.child("floorName").val();
@@ -282,9 +284,9 @@ function initStatus() { // to initialize the data need to be used
     blockdd.selectedIndex = "0";
     previouseSelectedBlock = blockdd.options[0].id;
     floordd.selectedIndex = "0";
-
-    changeEditorCanvasSize();
     previouseSelectedFloor = floordd.options[0].id;
+    changeEditorCanvasSize(previouseSelectedBlock,previouseSelectedFloor);
+   
 }
 
 // draw the canvas for each item has
@@ -612,36 +614,38 @@ function reloadPage() {
 // function for change floor
 function changeFloor(e) {
     var selectedBlock = blockdd.options[blockdd.selectedIndex];
-    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
-        floordd.remove(i);
-    }
+    var selectedFloor = floordd.options[floordd.selectedIndex];
+
+    floordd.options.length = 0;
+    
     floors.forEach(function (f) {
-        
         if (f.blockid === selectedBlock.id) {
-           
-        
-            //clean all selection 1st
             var opt = document.createElement("option"); // add dropdown item
             opt.id = f.floorid;
             opt.value = f.floorName;
             opt.innerHTML = f.floorName;
             floordd.add(opt);
+            
         }
     });
+    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
+        if (floordd.options[i].id === selectedFloor.id) {
+            floordd.selectedIndex = i;
+        }
+    }
+    
     saveDraggedCompsToFloor();
-    retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
-    
-    previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
-    previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
-    
-    changeEditorCanvasSize();
+    retrieveSelectedFloorDraggedComps(selectedBlock.id,selectedFloor.id); // update the canvas design with the new slected floor
+    changeEditorCanvasSize(selectedBlock.id,selectedFloor.id);
+    previouseSelectedBlock = selectedBlock.id;// update the previous value
+    previouseSelectedFloor = selectedFloor.id;
 
 
 }
-function changeEditorCanvasSize() {
+function changeEditorCanvasSize(sBlock,sFloor) {
 
-    var selectedBlock = blockdd.options[blockdd.selectedIndex].id;
-    var selectedFloor = floordd.options[floordd.selectedIndex].id;
+    var selectedBlock = sBlock;
+    var selectedFloor = sFloor;
 
     floors.forEach(function (floor) {
 
@@ -667,9 +671,9 @@ function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to t
         }
     }
 }
-function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
+function retrieveSelectedFloorDraggedComps(selectedBlock,selectedFloor) { //to retrieve the dragged comps from the selected floor.
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
-        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) { 
+        if (floor.blockid === selectedBlock && floor.floorid === selectedFloor) { 
             draggedComps = floor.draggedComps;
         }
     });

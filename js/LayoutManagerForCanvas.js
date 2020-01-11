@@ -50,7 +50,7 @@ class slot extends component {
 }
 //initialize canvas
 function proceedToEditor(parkingLot, blocks, floors) { //function to create the layout
-    alert(staff.uid);
+
     isDragging = false;
     document.getElementById("basicContainer").style.display = "none";
     document.getElementById("layoutContainer").style.display = "block";
@@ -118,8 +118,9 @@ function initStatus() {
     blockdd.selectedIndex = "0";
     previouseSelectedBlock = blockdd.options[0].id;
     floordd.selectedIndex = "0";
-    changeEditorCanvasSize();
     previouseSelectedFloor = floordd.options[0].id;
+    changeEditorCanvasSize(previouseSelectedBlock,previouseSelectedFloor);
+    
 
 }
 
@@ -443,38 +444,37 @@ function isSpecificComponet(compsName) {// for component detection when dragging
 // function for change floor
 function changeFloor(e) {
     var selectedBlock = blockdd.options[blockdd.selectedIndex];
-    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
-        floordd.remove(i);
-    }
+    var selectedFloor = floordd.options[floordd.selectedIndex];
+    floordd.options.length = 0;
     floors.forEach(function (f) {
-        
         if (f.blockid === selectedBlock.id) {
-           
-        
-            //clean all selection 1st
             var opt = document.createElement("option"); // add dropdown item
             opt.id = f.floorid;
-            opt.value = f.floorName;
-            opt.innerHTML = f.floorName;
+            opt.value = f.floorid;
+            opt.innerHTML = f.floorid;
             floordd.add(opt);
+            
         }
     });
+    for (var i = 0; i < floordd.options.length; i++) { //clear all drop down item
+        if (floordd.options[i].id === selectedFloor.id) {
+            floordd.selectedIndex = i;
+        }
+    }
     saveDraggedCompsToFloor();
-    retrieveSelectedFloorDraggedComps(); // update the canvas design with the new slected floor
+    retrieveSelectedFloorDraggedComps(selectedBlock.id,selectedFloor.id); // update the canvas design with the new slected floor
+    changeEditorCanvasSize(selectedBlock,selectedFloor);
+    previouseSelectedBlock = selectedBlock.id;// update the previous value
+    previouseSelectedFloor = selectedFloor.id;
     
-    previouseSelectedBlock = blockdd.options[blockdd.selectedIndex].id;// update the previous value
-    previouseSelectedFloor = floordd.options[floordd.selectedIndex].id;
     
-    changeEditorCanvasSize();
 
 
 }
-function changeEditorCanvasSize() {
-    var blockdd = document.getElementById("blockdd");
-    var floordd = document.getElementById("floordd");
-
-    var selectedBlock = blockdd.options[blockdd.selectedIndex].id;
-    var selectedFloor = floordd.options[floordd.selectedIndex].id;
+function changeEditorCanvasSize(sBlock,sFloor) {
+    
+    var selectedBlock = sBlock;
+    var selectedFloor = sFloor;
 
     floors.forEach(function (floor) {
         if (floor.blockid === selectedBlock && floor.floorid === selectedFloor) {
@@ -498,9 +498,9 @@ function saveDraggedCompsToFloor() {// save the dragged comps in the canvas to t
         }
     }
 }
-function retrieveSelectedFloorDraggedComps() { //to retrieve the dragged comps from the selected floor.
+function retrieveSelectedFloorDraggedComps(selectedBlock,selectedFloor) { //to retrieve the dragged comps from the selected floor.
     floors.forEach(function (floor) { // take the save dragged comps back to the current array
-        if (floor.blockid === blockdd.options[blockdd.selectedIndex].id && floor.floorid === floordd.options[floordd.selectedIndex].id) {
+        if (floor.blockid === selectedBlock && floor.floorid === selectedFloor) {
             draggedComps = floor.draggedComps;
         }
     });
@@ -645,7 +645,7 @@ function saveParkingLayout() {
         status: parkingLotStatus
     }).key;
 
-
+    alert(blocks.length);
     blocks.forEach(function (b) { // b stand for block
         var blockKey = blockRef.push({
             parkingLotid: lotKey,
@@ -694,7 +694,7 @@ function saveParkingLayout() {
     });
     alert("New Parking Layout Created!");
 
-    setTimeout(reloadPage, 2000);
+    setTimeout(reloadPage, 3000);
 
 
 }
