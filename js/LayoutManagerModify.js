@@ -295,15 +295,15 @@ function rectForCC(x, y, w, h, name) {//for Component canvas
     blocks.le
     if (name === "exit") {// draw image if need
 
-        image.src = "/image/exit-50.png"
+        image.src = "../image/exit-50.png"
         cc.drawImage(image, x, y, w, h);
     } else if (name === "entry") {
 
-        image.src = "/image/entry-50.png"
+        image.src = "../image/entry-50.png"
         cc.drawImage(image, x, y, w, h);
     } else if (name === "entrance") {
 
-        image.src = "/image/entrance-50.png"
+        image.src = "../image/entrance-50.png"
         cc.drawImage(image, x, y, w, h);
     } else {
         cc.beginPath();
@@ -326,15 +326,15 @@ function drawComponent() {
 function rectForEC(x, y, w, h, name) { //for Editor Canvas
     var image = new Image();
     if (name === "exit") {
-        image.src = "/image/exit-50.png"
+        image.src = "../image/exit-50.png"
         ec.drawImage(image, x, y, w, h);
     } else if (name === "entry") {
 
-        image.src = "/image/entry-50.png";
+        image.src = "../image/entry-50.png";
         ec.drawImage(image, x, y, w, h);
     } else if (name === "entrance") {
 
-        image.src = "/image/entrance-50.png"
+        image.src = "../image/entrance-50.png"
         ec.drawImage(image, x, y, w, h);
     } else {
         ec.beginPath();
@@ -378,7 +378,7 @@ function drawEditor() {
     if (isDragging) { // draw the cancel button if the comp start dragging
         var img = new Image();
 
-        img.src = "/image/icons8-delete-50.png";
+        img.src = "../image/icons8-delete-50.png";
 
 
         del = { x: 10, y: 10, w: 30, h: 30 };
