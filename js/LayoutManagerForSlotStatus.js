@@ -223,15 +223,15 @@ function initStatus() { // to initialize the data need to be used
 function rectForEC(x, y, w, h, name) { //for Editor Canvas
     var image = new Image();
     if (name === "exit") {
-        image.src = "/image/exit-50.png"
+        image.src = "../image/exit-50.png"
         ec.drawImage(image, x, y, w, h);
     } else if (name === "entry") {
 
-        image.src = "/image/entry-50.png";
+        image.src = "../image/entry-50.png";
         ec.drawImage(image, x, y, w, h);
     } else if (name === "entrance") {
 
-        image.src = "/image/entrance-50.png"
+        image.src = "../image/entrance-50.png"
         ec.drawImage(image, x, y, w, h);
     } else {
         ec.beginPath();

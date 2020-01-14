@@ -48,13 +48,13 @@ firebase.auth().onAuthStateChanged(function (user) {
         if (!isSignout) {
             alert("You are not logged in.");
             setCookie("isSignout", true);
-            window.location = "/public/stafflogin.html";
+            window.location = "../public/stafflogin.html";
         } else if (isSignout) {
             var currentLocation = window.location.href;
             var yesno = currentLocation.includes("stafflogin");
             if (!yesno) {
                 alert("You are not logged in.");
-                window.location = "/public/stafflogin.html";
+                window.location = "../public/stafflogin.html";
             }
         }
         // No user is signed in.
