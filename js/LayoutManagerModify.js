@@ -472,15 +472,7 @@ function mouseUp(e) {
 function mouseMove(e) {
 
     if (isDragging) { // if the the dragged components has been pressed
-        if (e.target.id === "compCanvas") { //move the selected in canvas
-            mouseOnCanvas = new getMousePos(Ccanvas, e);
-            mxt = mouseOnCanvas.x;
-            myt = mouseOnCanvas.y;
-            var dx = mxt - startX; // distance of the mouse move
-            var dy = myt - startY;
-            comps[selectedComp].x += dx;
-            comps[selectedComp].y += dy;
-        } else if (e.target.id === "editCanvas") {
+        if (e.target.id === "editCanvas") {
             mouseOnCanvas = new getMousePos(Ecanvas, e);
             mxt = mouseOnCanvas.x;
             myt = mouseOnCanvas.y;
